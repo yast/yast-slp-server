@@ -1,0 +1,348 @@
+/**
+ * File:	include/slp-server/dialogs.ycp
+ * Package:	Configuration of slp-server
+ * Summary:	Dialogs definitions
+ * Authors:	Zugec Michal <mzugec@suse.cz>
+ *
+ * $Id: dialogs.ycp 13879 2004-02-05 11:29:30Z msvec $
+ */
+
+{
+
+textdomain "slp-server";
+
+import "Label";
+import "Wizard";
+import "SlpServer";
+import "CWMTab";
+import "CWM";
+import "CWMServiceStart";
+import "CWMFirewallInterfaces";
+import "TablePopup";
+import "LogView";
+
+include "slp-server/helps.ycp";
+
+void initServerSettings(string key);
+symbol handleServerSettings(string key, map event );
+symbol handleShowLog(string key, map event );
+
+
+
+
+map<string, map <string, any> > widgets = $[
+            "auto_start_up" : CWMServiceStart::CreateAutoStartWidget ($[
+                "get_service_auto_start" : SlpServer::GetStartService,
+                "set_service_auto_start" : SlpServer::SetStartService,
+                // radio button (starting SLP service - option 1)
+                "start_auto_button" : _("When &Booting"),
+                // radio button (starting SLP service - option 2)
+                "start_manual_button" : _("&Manually"),
+                "help" : sformat (CWMServiceStart::AutoStartHelpTemplate (),
+                    // part of help text, used to describe radiobuttons (matching starting SLP service but without "&")
+                    _("When Booting"),
+                    // part of help text, used to describe radiobuttons (matching starting SLP service but without "&")
+                    _("Manually")
+                ),
+            ]),
+    "firewall" : CWMFirewallInterfaces::CreateOpenFirewallWidget ($[
+        "services" : [ "slp-daemon" ],
+        "display_details" : true,
+    ]),
+    "view_log" :$[
+	"widget" : `custom, 
+	"custom_widget" : `VBox(
+				`PushButton(`id(`show_log), _("Show Log"))
+				),
+	"handle" : handleShowLog,
+//	"handleWidgets" : handleShowLog,
+	"label" : _("Show Log"),
+	"help" : HELPS["show_log"]:""
+		],
+                "server_settings" : $[
+                        "widget" : `custom,
+                        "custom_widget" :
+                                `VBox(
+                                 `RadioButtonGroup
+                                   (
+                                    `id(`resp),
+                                    `VBox( `Label(_("Response To")),
+                                    `Left(`RadioButton(`id(`bc),`opt(`notify ), _("Broadcast"))),
+                                    `Left(`RadioButton(`id(`mc),`opt(`notify ), _("Multicast"))),
+                                    `Left(`RadioButton(`id(`da),`opt(`notify ), _("DA Server")))
+                                    )
+                                   ),
+                                 `TextEntry(`id(`ip), _("&IP Addresses of DA Servers")),
+                                 `TextEntry(`id(`scope), _("&Scopes"))
+                                ),
+                        "init"   : initServerSettings,
+                        "handle" : handleServerSettings,
+                        "label"  : _("Settings of SLP server"),
+                        "help" : HELPS["custom_settings"]:""
+                ],
+        "reg_table" :
+           TablePopup::CreateTableDescr (
+            $["add_delete_buttons" : true, "up_down_buttons" : false, "unique_keys" : false],
+             $[
+//              "init" : HostInit,
+//              "handle" : handleHostTable,
+//              "store" : HostStore,
+//              "validate_type" : `function,
+//              "validate_function" : validate_server_fnc,
+//              "options" : union( getHostOptions(), popups ),
+//              "ids" : HostTableContents,
+//              "id2key" : HostId2Key,
+/*
+              "fallback" : $[
+                "init" : DefaultHostPopupInit,
+                "store" : DefaultHostPopupStore,
+                "summary" : HostTableEntrySummary,
+                        ],
+*/
+//              "option_delete" : HostTableEntryDelete,
+//              "add_items" : maplist( string key, any value, (map<string,any>)union( getHostOptions(), popups ), ``(key) ),
+              "help" : HELPS["reg_files"]:""
+             ]
+            ),
+
+];
+
+
+
+// description map for tabs in overview dialog
+map tabs_descr = $[
+	"general":$[
+	 "header"	: _("Global SLP Configuration"),
+	 "contents"	:
+			  `VBox(
+			  `VStretch(),
+			  `HBox(
+	                   `HStretch(),
+                           `HSpacing (1),
+			    `VBox(
+				"auto_start_up",
+				`VSpacing (2),
+				"firewall",
+				`VSpacing (2),
+				"view_log",
+				`VSpacing(2)
+				),
+                           `HSpacing (1),
+                           `HStretch()
+			      ),
+			  `VStretch()
+			),
+	 "widget_names"	: [ "auto_start_up", "firewall", "view_log" ]
+	],
+
+	"server":$[
+	 "header"	: _("SLP Server Configuration"),
+	 "contents"	:
+			  `VBox(
+			  `VStretch(),
+			  `HBox(
+                           `HStretch(),
+                           `HSpacing (1),
+			    `VBox(
+				"server_settings",
+				`VSpacing (2),
+				`PushButton(_("Expert Settings")),
+				`VSpacing (2)
+				),
+                           `HSpacing (1),
+                           `HStretch()
+			       ),
+			  `VStretch()
+			),
+	 "widget_names"	: [ "server_settings" ]
+	],
+	"static"	: $[
+		"header" : _("Static Configuration Files"),
+		"contents" : 
+			`VBox(
+			`VStretch(),
+			`HBox(
+                           `HStretch(),
+                           `HSpacing (1),
+			   `VBox(
+				"reg_table",
+				`VSpacing (2)
+				),
+                           `HStretch(),
+                           `HSpacing (1)
+			),
+			`VStretch()
+			),
+		"widget_names"	: [ "reg_table" ]
+	]
+];
+
+/**
+ * Overview dialog
+ * @return dialog result
+ */
+any OverviewDialog() {
+
+    /* SlpServer overview dialog caption */
+    string caption = _("SlpServer Overview");
+
+    map widget_descr = $[
+        "tab": CWMTab::CreateWidget($[
+            "tab_order": [ "general", "server", "static" ],
+            "tabs": tabs_descr,
+            "widget_descr": widgets,
+            "initial_tab" : "general",
+            "tab_help" : _("help for tab"),
+        ]),
+    ];
+    term contents = `VBox( "tab"/*, `VStretch ()*/);
+
+    list<map <string, any> > w = CWM::CreateWidgets (["tab"], (map <string, map <string, any> >)widget_descr);
+    string help = CWM::MergeHelps(w);
+    contents = CWM::PrepareDialog(contents, w);
+
+    Wizard::SetContentsButtons(caption, contents, help, Label::NextButton (), Label::FinishButton ());
+    Wizard::HideBackButton();
+
+	y2internal("%1", SlpServer::slp_config);
+    symbol ret = CWM::Run(w, $[`abort:ReallyAbort ]);
+
+    return ret;
+}
+
+/**
+ * General dialog
+ * @return dialog result
+ */
+any GeneralDialog () {
+
+    /* SlpServer configure1 dialog caption */
+    string caption = _("SlpServer Configuration");
+
+    /* SlpServer configure1 dialog contents */
+    term contents = `Label (_("First part of configuration of slp-server"));
+
+    Wizard::SetContentsButtons(caption, contents, HELPS["general"]:"",
+	    Label::BackButton(), Label::NextButton());
+
+    any ret = nil;
+    while(true) {
+
+	ret = UI::UserInput();
+	/* abort? */
+	if(ret == `abort || ret == `cancel) {
+	    if(ReallyAbort()) break;
+	    else continue;
+	}
+        else if(ret == `next || ret == `back) {
+            break;
+        }
+        else {
+            y2error("unexpected retcode: %1", ret);
+            continue;
+        }
+    }
+
+    return ret;
+}
+
+/**
+ * Server dialog
+ * @return dialog result
+ */
+any ServerDialog () {
+
+    /* SlpServer configure2 dialog caption */
+    string caption = _("SlpServer Configuration");
+
+    /* SlpServer configure2 dialog contents */
+    term contents = `Label (_("Second part of configuration of slp-server"));
+
+    Wizard::SetContentsButtons(caption, contents, HELPS["c2"]:"",
+	    Label::BackButton(), Label::NextButton());
+
+    any ret = nil;
+    while(true) {
+
+	ret = UI::UserInput();
+
+	/* abort? */
+	if(ret == `abort || ret == `cancel) {
+	    if(ReallyAbort()) break;
+	    else continue;
+	}
+        else if(ret == `next || ret == `back) {
+            break;
+        }
+        else {
+            y2error("unexpected retcode: %1", ret);
+            continue;
+        }
+    }
+
+    return ret;
+}
+
+//log viewer for General Dialog
+define symbol handleShowLog(string key, map event ) ``{
+	y2internal("%1 %2", key, event);
+ if (event["ID"]:nil == `show_log)
+  {
+        string log = "";
+        log = splitstring( log, " " )[0]:"/var/log/slpd.log" ;
+
+  LogView::Display ($[
+            "command" : sformat( "tail -f %1 -n 100", log ),
+            "save" : true,
+//	    "actions" : []
+        ]);
+  }
+ return nil;
+}
+// Server Setting Dialog
+
+void changeResponseTo(symbol resp){
+   switch (resp){
+   case(`bc) : y2internal("Use broadcast");
+                UI::ChangeWidget(`id(`ip), `Enabled, false);
+                UI::ChangeWidget(`id(`scope), `Enabled, false);
+                break;
+   case(`mc) : y2internal("Use multicast");
+                UI::ChangeWidget(`id(`ip), `Enabled, false);
+                UI::ChangeWidget(`id(`scope), `Enabled, true);
+                break;
+   case(`da) : y2internal("Use DA Server");
+                UI::ChangeWidget(`id(`ip), `Enabled, true);
+                UI::ChangeWidget(`id(`scope), `Enabled, true);
+                break;
+   }
+
+}
+
+define void initServerSettings(string key) ``{
+ symbol mode = nil;
+ y2internal("Initialize server settings");
+ UI::ChangeWidget(`id(`ip), `Value, SlpServer::slp_config["net.slp.daaddresses"]:"");
+ UI::ChangeWidget(`id(`scope), `Value, SlpServer::slp_config["net.slp.usescopes"]:"");
+ if (SlpServer::slp_config["net.slp.isbroadcastonly"]:"false" == "true") mode = `bc;
+  else
+   if (SlpServer::slp_config["net.slp.passiveDADetection"]:"false" == "false") mode = `mc;
+    else mode = `da;
+
+ UI::ChangeWidget(`id(`resp), `CurrentButton, mode);
+ changeResponseTo(mode);
+}
+
+
+define symbol handleServerSettings(string key, map event ) ``{
+ if ( event["EventReason"]:"" == "ValueChanged" )
+  {
+   changeResponseTo(event["WidgetID"]:`nil);
+  }
+ return nil;
+}
+
+
+
+/* EOF */
+}

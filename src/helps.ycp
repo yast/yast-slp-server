@@ -1,0 +1,104 @@
+/**
+ * File:	include/slp-server/helps.ycp
+ * Package:	Configuration of slp-server
+ * Summary:	Help texts of all the dialogs
+ * Authors:	Zugec Michal <mzugec@suse.cz>
+ *
+ * $Id: helps.ycp 23442 2005-05-18 07:46:28Z visnov $
+ */
+
+{
+
+textdomain "slp-server";
+
+/**
+ * All helps are here
+ */
+map HELPS = $[
+
+    /* Read dialog help 1/2 */
+    "read" : _("<p><b><big>Initializing slp-server Configuration</big></b><br>
+Please wait...<br></p>
+") +
+
+    /* Read dialog help 2/2 */
+    _("<p><b><big>Aborting Initialization:</big></b><br>
+Safely abort the configuration utility by pressing <b>Abort</b> now.</p>
+"),
+
+    /* Write dialog help 1/2 */
+    "write" : _("<p><b><big>Saving slp-server Configuration</big></b><br>
+Please wait...<br></p>
+") +
+
+    /* Write dialog help 2/2 */
+_("<p><b><big>Aborting Saving:</big></b><br>
+Abort the save procedure by pressing <b>Abort</b>.
+An additional dialog informs whether it is safe to do so.
+</p>
+"),
+
+    /* Summary dialog help 1/3 */
+    "summary" : _("<p><b><big>SlpServer Configuration</big></b><br>
+Configure slp-server here.<br></p>
+") +
+
+    /* Summary dialog help 2/3 */
+    _("<p><b><big>Adding a slp-server:</big></b><br>
+Choose an slp-server from the list of detected slp-servers.
+If your slp-server was not detected, use <b>Other (not detected)</b>.
+Then press <b>Configure</b>.</p>
+") +
+
+    /* Summary dialog help 3/3 */
+    _("<p><b><big>Editing or Deleting:</big></b><br>
+If you press <b>Edit</b>, an additional dialog in which to change
+the configuration opens.</p>
+"),
+
+    /* Ovreview dialog help 1/3 */
+    "overview" : _("<p><b><big>SlpServer Configuration Overview</big></b><br>
+Obtain an overview of installed slp-servers. Additionally
+edit their configurations.<br></p>
+") +
+
+    /* Ovreview dialog help 2/3 */
+_("<p><b><big>Adding a slp-server:</big></b><br>
+Press <b>Add</b> to configure a slp-server.</p>") +
+
+    /* Ovreview dialog help 3/3 */
+_("<p><b><big>Editing or Deleting:</big></b><br>
+Choose a slp-server to change or remove.
+Then press <b>Edit</b> or <b>Delete</b> as desired.</p>
+"),
+
+    /* Configure1 dialog help 1/2 */
+    "general" : _("<p><b><big>Configuration Part One</big></b><br>
+Press <b>Next</b> to continue.
+<br></p>") +
+
+    /* Configure1 dialog help 2/2 */
+_("<p><b><big>Selecting Something</big></b><br>
+It is not possible. You must code it first. :-)
+</p>"),
+
+    /* Configure2 dialog help 1/2 */
+    "c2" : _("<p><b><big>Configuration Part Two</big></b><br>
+Press <b>Next</b> to continue.
+<br></p>
+") +
+
+    /* Configure2 dialog help 2/2 */
+_("<p><b><big>Selecting Something</big></b><br>
+It is not possible. You must code it first. :-)
+</p>"),
+
+   "service" : _("Help for service enable / disable"),
+   "firewall_adapt" : _("Help for firewall"),
+   "ip_address"	 : _("Help for IP address"),
+   "response"	: _("Help for response"),
+   "scopes"	: _("Help for scopes")
+];
+
+/* EOF */
+}
