@@ -91,7 +91,9 @@ map <string, any> SETTINGS = $[];
 global map<string, any> slp_config = $[
 	"net.slp.usescopes":"DEFAULT",
 	"net.slp.isda":"false",
-	"net.slp.isbroadcastonly":"false"
+	"net.slp.isbroadcastonly":"false",
+	"net.slp.daheartbeat":nil
+
 	];
 
 boolean ReadGlobalConfig(){
@@ -103,12 +105,20 @@ boolean ReadGlobalConfig(){
  if (k1 == "value") {
    foreach(map<string, any > v2, (list < map<string, any> >)v1, {
     if (v2["type"]:nil == 1) slp_config[v2["name"]:""]=v2["value"]:"";
-//y2internal("%1 %2", v2["name"]:"", v2["value"]:"");
    });
   }
  });
-y2internal("in read - %1", slp_config);
-return true;
+ y2milestone("Values from /etc/slp.conf : %1", slp_config);
+ return true;
+}
+
+
+boolean WriteGlobalConfig(){
+
+//  SCR::Write(.slp.all, SETTINGS);
+y2internal("write - %1", SETTINGS);
+
+ return true;
 }
 
 
@@ -220,11 +230,13 @@ global boolean Write() {
 	""
     );
 
-    // write settings
-    if(Abort()) return false;
+        Progress::set(false);
+        SuSEFirewall::Write();
+        Progress::set(true);
+
     Progress::NextStage();
     /* Error message */
-    if(false) Report::Error (_("Cannot write settings."));
+    if(!WriteGlobalConfig()) Report::Error (_("Cannot write settings."));
     sleep(sl);
 
     // run SuSEconfig
@@ -300,8 +312,9 @@ global boolean GetStartService() {
 }
 
 global void SetStartService(boolean status) {
-y2internal("Set service status %1", status);
-// return true;
+ y2internal("Set service status %1", status);
+ if (status == true) Service::Enable("slpd");
+	else Service::Disable("slpd");
 }
 
 

@@ -31,12 +31,14 @@ void initTable (string key);
 list valuesTable (map descr);
 string Id2Key( map desc, any option_id );
 map getOptions();
-map < integer, map <string,any> > slp_options=nil;
-string tableSummary (any option_id, string option_type);
-void tableInit (any option_id, string option_type);
+string rowSummary (any option_id, string option_type);
+void rowInit (any option_id, string option_type);
+void rowStore (any option_id, string option_type);
 symbol tableHandle (string table, map event);
+void storeExpert (string key, map event);
 string current_tab="general";
-
+list keys = [];
+map<string, any> copy_config=$[];
 
 map<string, map <string, any> > widgets = $[
             "auto_start_up" : CWMServiceStart::CreateAutoStartWidget ($[
@@ -86,7 +88,8 @@ map<string, map <string, any> > widgets = $[
                      `VBox( `Label(_("Response To")),
                      `Left(`RadioButton(`id(`bc),`opt(`notify ), _("Broadcast"))),
                      `Left(`RadioButton(`id(`mc),`opt(`notify ), _("Multicast"))),
-                     `Left(`RadioButton(`id(`da),`opt(`notify ), _("DA Server")))
+                     `Left(`RadioButton(`id(`da),`opt(`notify ), _("DA Server"))),
+		     `Left(`RadioButton(`id(`da_server), `opt(`notify), _("Becomes DA Server")))
                      )
                     ),
                   `TextEntry(`id(`ip), _("&IP Addresses of DA Servers")),
@@ -102,20 +105,17 @@ map<string, map <string, any> > widgets = $[
             $["add_delete_buttons" : true, "up_down_buttons" : false, "unique_keys" : true],
              $[
               "init" : initTable,
-//              "handle" : tableHandle,
-//              "store" : HostStore,
-//              "validate_type" : `function,
-//              "validate_function" : validate_server_fnc,
+              "store" : storeExpert,
               "options" : getOptions(),
               "ids" : valuesTable,
               "id2key" : Id2Key,
               "fallback" : $[
-//                "init" : tableInit,
-//                "store" : DefaultHostPopupStore,
-                "summary" : tableSummary,
+                "init" : rowInit,
+                "store" : rowStore,
+                "summary" : rowSummary,
                         ],
 //              "option_delete" : HostTableEntryDelete,
-//              "add_items" : maplist( string key, any value, (map<string,any>)union( getHostOptions(), popups ), ``(key) ),
+              "add_items" : maplist(string k1, any v1, (map<string,any>) getOptions(), ``(k1)),
               "help" : HELPS["server_table"]:""
              ]
             ),
@@ -138,13 +138,17 @@ define string EnableServiceSummary ( any opt_id, string opt_key)
  return _("Yes");
 }
 
-define void tableInit (any option_id, string option_type) ``{
+define void rowInit (any option_id, string option_type) ``{
  y2internal("init \n%1\n%2", option_id, option_type);
- UI::ChangeWidget (`id (option_type), `Value, "inserted text");
+ UI::ChangeWidget (`id (option_type), `Value, copy_config[option_type]:"");
 }
 
-define string tableSummary (any option_id, string option_type)``{
- return SlpServer::slp_config[option_type]:"";
+define string rowSummary (any option_id, string option_type)``{
+ return copy_config[option_type]:"";
+}
+
+void rowStore (any option_id, string option_type) ``{
+ copy_config[option_type]=(string)UI::QueryWidget (`id (option_type), `Value);
 }
 
 define void initTable (string key) ``{
@@ -156,26 +160,54 @@ define void initTable (string key) ``{
 
 define map getOptions() ``{
  y2internal("get opt");
- return $[];
-//    "enable_service" : $[
-//        "table" : $[
-//         "label" : _("Enable DHCP server at boot time"),
-//         "summary" : EnableServiceSummary,
-//        ]]];
+ return $[
+	"net.slp.usescopes":$[],
+	"net.slp.daaddresses":$[],
+	"net.slp.isda":$["popup":$["items":[["true"], ["false"]], "widget":`combobox]],
+	"net.slp.daheartbeat":$[],
+	"net.slp.watchregistrationpid":$["popup":$["items":[["true"], ["false"]], "widget":`combobox]],
+	"net.slp.maxresults":$[],
+	"net.slp.isbroadcastonly":$["popup":$["items":[["true"], ["false"]], "widget":`combobox]],
+	"net.slp.passivedadetection":$["popup":$["items":[["true"], ["false"]], "widget":`combobox]],
+	"net.slp.activedadetection":$["popup":$["items":[["true"], ["false"]], "widget":`combobox]],
+	"net.slp.daactivediscoveryinterval":$[],
+	"net.slp.multicastttl":$[],
+	"net.slp.dadiscoverymaximumwait":$[],
+	"net.slp.dadiscoverytimeouts":$[],
+	"net.slp.multicastmaximumwait":$[],
+	"net.slp.multicasttimeouts":$[],
+	"net.slp.unicastmaximumwait":$[],
+	"net.slp.unicasttimeouts":$[],
+	"net.slp.datagramtimeouts":$[],
+	"net.slp.randomWaitbound":$[],
+	"net.slp.mtu":$[],
+	"net.slp.interfaces":$[],
+	"net.slp.securityenabled":$["popup":$["items":[["true"], ["false"]], "widget":`combobox]],
+	"net.slp.checksourceaddr":$["popup":$["items":[["true"], ["false"]], "widget":`combobox]],
+	"net.slp.tracedatraffic":$["popup":$["items":[["true"], ["false"]], "widget":`combobox]],
+	"net.slp.tracereg":$["popup":$["items":[["true"], ["false"]], "widget":`combobox]],
+	"net.slp.tracedrop":$["popup":$["items":[["true"], ["false"]], "widget":`combobox]],
+	"net.slp.tracemsg":$["popup":$["items":[["true"], ["false"]], "widget":`combobox]]
+	];
 }
-//list options = [ $["0":$["asdf":"sdf"]] ];
 
 define list valuesTable (map descr) {
  y2internal("values table %1", descr);
- list keys = [];
- foreach(string k1, any v1, SlpServer::slp_config, { keys =add(keys, k1);});
+ keys = [];
+ foreach(string k1, any v1, copy_config, { if (v1 != nil) keys =add(keys, k1);});
  y2internal("config %1", keys);
  return keys;
 }
 
 define string Id2Key( map desc, any option_id ) ``{
-// y2internal("id2key %1\n%2", desc, option_id);
+ y2internal("id2key %1", option_id);
  return (string) option_id;
+}
+
+define void storeExpert (string key, map event) ``{
+ y2internal("store %1, %2", key, event);
+ SlpServer::slp_config = copy_config;
+y2internal("slp config %1", SlpServer::slp_config);
 }
 
 //server table functions
@@ -305,6 +337,7 @@ any OverviewDialog() {
  */
 any ExpertDialog () {
     current_tab="server";
+    copy_config = SlpServer::slp_config;
     string caption = _("SlpServer Configuration - Expert Dialog");
 
     list<map <string, any> > w = CWM::CreateWidgets (["server_table"], (map <string, map <string, any> >)widgets);
@@ -318,23 +351,6 @@ any ExpertDialog () {
 	    Label::BackButton(), Label::NextButton());
 
     any ret = CWM::Run(w, $[`abort:ReallyAbort ]);
-/*
-    while(true) {
-
-	ret = UI::UserInput();
-	if(ret == `abort || ret == `cancel) {
-	    if(ReallyAbort()) break;
-	    else continue;
-	}
-        else if(ret == `next || ret == `back) {
-            break;
-        }
-        else {
-            y2error("unexpected retcode: %1", ret);
-            continue;
-        }
-    }
-*/
     return ret;
 }
 /**
@@ -384,8 +400,7 @@ define symbol handleShowLog(string key, map event ) ``{
 
   LogView::Display ($[
             "command" : sformat( "tail -f %1 -n 100", log ),
-            "save" : true,
-//	    "actions" : []
+            "save" : false,
         ]);
   }
  return nil;
@@ -394,17 +409,28 @@ define symbol handleShowLog(string key, map event ) ``{
 
 void changeResponseTo(symbol resp){
    switch (resp){
-   case(`bc) : y2internal("Use broadcast");
+   case(`bc) : y2milestone("Use broadcast");
                 UI::ChangeWidget(`id(`ip), `Enabled, false);
                 UI::ChangeWidget(`id(`scope), `Enabled, false);
+		SlpServer::slp_config["net.slp.isda"]="false";
+		SlpServer::slp_config["net.slp.isbroadcastonly"]="true";
                 break;
-   case(`mc) : y2internal("Use multicast");
+   case(`mc) : y2milestone("Use multicast");
                 UI::ChangeWidget(`id(`ip), `Enabled, false);
                 UI::ChangeWidget(`id(`scope), `Enabled, true);
+		SlpServer::slp_config["net.slp.isda"]="false";
+		SlpServer::slp_config["net.slp.isbroadcastonly"]="false";
                 break;
-   case(`da) : y2internal("Use DA Server");
+   case(`da) : y2milestone("Use DA Server");
                 UI::ChangeWidget(`id(`ip), `Enabled, true);
                 UI::ChangeWidget(`id(`scope), `Enabled, true);
+		SlpServer::slp_config["net.slp.isda"]="false";
+                break;
+   case(`da_server) : y2milestone("Becomes DA Server");
+                UI::ChangeWidget(`id(`ip), `Enabled, false);
+                UI::ChangeWidget(`id(`scope), `Enabled, false);
+		SlpServer::slp_config["net.slp.isda"]="true";
+		SlpServer::slp_config["net.slp.isbroadcastonly"]=nil;
                 break;
    }
 
@@ -415,10 +441,12 @@ define void initServerSettings(string key) ``{
  y2internal("Initialize server settings");
  UI::ChangeWidget(`id(`ip), `Value, SlpServer::slp_config["net.slp.daaddresses"]:"");
  UI::ChangeWidget(`id(`scope), `Value, SlpServer::slp_config["net.slp.usescopes"]:"");
- if (SlpServer::slp_config["net.slp.isbroadcastonly"]:"false" == "true") mode = `bc;
+ if (SlpServer::slp_config["net.slp.isda"]:"" == "true") mode = `da_server;
   else
-   if (SlpServer::slp_config["net.slp.passiveDADetection"]:"false" == "false") mode = `mc;
-    else mode = `da;
+   if (SlpServer::slp_config["net.slp.isbroadcastonly"]:"false" == "true") mode = `bc;
+    else
+     if (SlpServer::slp_config["net.slp.passivedadetection"]:"false" == "false") mode = `mc;
+      else mode = `da;
 
  UI::ChangeWidget(`id(`resp), `CurrentButton, mode);
  changeResponseTo(mode);
@@ -433,35 +461,6 @@ define symbol handleServerSettings(string key, map event ) ``{
  return nil;
 }
 
-void initExpertTab (string key);
-
-map<string, any> hostwidget = (map<string, any>)TablePopup::CreateTableDescr (
-            $["add_delete_buttons" : true,
-              "up_down_buttons" : false,
-              "unique_keys" : false]
-        , $[
-            "init" : initExpertTab,
-//            "handle" : handleHostTable,
-//            "store" : HostStore,
-//            "validate_type" : `function,
-//            "validate_function" : validate_server_fnc,
-            "options" : SlpServer::slp_config,
-//            "ids" : HostTableContents,
-//            "id2key" : HostId2Key,
-//            "fallback" : $[
-//                "init" : DefaultHostPopupInit,
-//                "store" : DefaultHostPopupStore,
-//                "summary" : HostTableEntrySummary,
-//            ],
-//            "option_delete" : HostTableEntryDelete,
-//            "add_items" :
-//                maplist( string key, any value, (map<string,any>)union( getHostOptions(), popups ), ``(key) ),
-            "help" : HELPS["expert_table"]:"",
-        ]);
-define void initExpertTab (string key) ``{
-//    if (key == "DEF_HOST") init_tab = "default_host";
-    TablePopup::TableInit (hostwidget, key);
-}
 
 define symbol handleExpert(string key, map event ) ``{
 

@@ -47,7 +47,7 @@ any MainSequence() {
 	],
 	"expert" : $[
             `abort      : `abort,
-            `next       : `next,
+            `next       : "overview",
 	]
     ];
 
