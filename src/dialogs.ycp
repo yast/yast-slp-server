@@ -26,8 +26,16 @@ include "slp-server/helps.ycp";
 void initServerSettings(string key);
 symbol handleServerSettings(string key, map event );
 symbol handleShowLog(string key, map event );
-
-
+symbol handleExpert(string key, map event );
+void initTable (string key);
+list valuesTable (map descr);
+string Id2Key( map desc, any option_id );
+map getOptions();
+map < integer, map <string,any> > slp_options=nil;
+string tableSummary (any option_id, string option_type);
+void tableInit (any option_id, string option_type);
+symbol tableHandle (string table, map event);
+string current_tab="general";
 
 
 map<string, map <string, any> > widgets = $[
@@ -55,59 +63,122 @@ map<string, map <string, any> > widgets = $[
 				`PushButton(`id(`show_log), _("Show Log"))
 				),
 	"handle" : handleShowLog,
-//	"handleWidgets" : handleShowLog,
 	"label" : _("Show Log"),
 	"help" : HELPS["show_log"]:""
 		],
-                "server_settings" : $[
-                        "widget" : `custom,
-                        "custom_widget" :
-                                `VBox(
-                                 `RadioButtonGroup
-                                   (
-                                    `id(`resp),
-                                    `VBox( `Label(_("Response To")),
-                                    `Left(`RadioButton(`id(`bc),`opt(`notify ), _("Broadcast"))),
-                                    `Left(`RadioButton(`id(`mc),`opt(`notify ), _("Multicast"))),
-                                    `Left(`RadioButton(`id(`da),`opt(`notify ), _("DA Server")))
-                                    )
-                                   ),
-                                 `TextEntry(`id(`ip), _("&IP Addresses of DA Servers")),
-                                 `TextEntry(`id(`scope), _("&Scopes"))
-                                ),
-                        "init"   : initServerSettings,
-                        "handle" : handleServerSettings,
-                        "label"  : _("Settings of SLP server"),
-                        "help" : HELPS["custom_settings"]:""
-                ],
+    "expert" :$[
+	"widget" : `custom, 
+	"custom_widget" : `VBox(
+				`PushButton(`id(`expert), _("Expert Settings"))
+				),
+	"handle" : handleExpert,
+	"label" : _("Expert Settings"),
+	"help" : HELPS["expert"]:""
+		],
+
+     "server_settings" : $[
+        "widget" : `custom,
+        "custom_widget" :
+                 `VBox(
+                  `RadioButtonGroup
+                    (
+                     `id(`resp),
+                     `VBox( `Label(_("Response To")),
+                     `Left(`RadioButton(`id(`bc),`opt(`notify ), _("Broadcast"))),
+                     `Left(`RadioButton(`id(`mc),`opt(`notify ), _("Multicast"))),
+                     `Left(`RadioButton(`id(`da),`opt(`notify ), _("DA Server")))
+                     )
+                    ),
+                  `TextEntry(`id(`ip), _("&IP Addresses of DA Servers")),
+                  `TextEntry(`id(`scope), _("&Scopes"))
+                 ),
+        "init"   : initServerSettings,
+        "handle" : handleServerSettings,
+        "label"  : _("Settings of SLP server"),
+        "help" : HELPS["custom_settings"]:""
+        ],
+	"server_table" :
+           TablePopup::CreateTableDescr (
+            $["add_delete_buttons" : true, "up_down_buttons" : false, "unique_keys" : true],
+             $[
+              "init" : initTable,
+//              "handle" : tableHandle,
+//              "store" : HostStore,
+//              "validate_type" : `function,
+//              "validate_function" : validate_server_fnc,
+              "options" : getOptions(),
+              "ids" : valuesTable,
+              "id2key" : Id2Key,
+              "fallback" : $[
+//                "init" : tableInit,
+//                "store" : DefaultHostPopupStore,
+                "summary" : tableSummary,
+                        ],
+//              "option_delete" : HostTableEntryDelete,
+//              "add_items" : maplist( string key, any value, (map<string,any>)union( getHostOptions(), popups ), ``(key) ),
+              "help" : HELPS["server_table"]:""
+             ]
+            ),
+
         "reg_table" :
            TablePopup::CreateTableDescr (
             $["add_delete_buttons" : true, "up_down_buttons" : false, "unique_keys" : false],
              $[
-//              "init" : HostInit,
-//              "handle" : handleHostTable,
-//              "store" : HostStore,
-//              "validate_type" : `function,
-//              "validate_function" : validate_server_fnc,
-//              "options" : union( getHostOptions(), popups ),
-//              "ids" : HostTableContents,
-//              "id2key" : HostId2Key,
-/*
-              "fallback" : $[
-                "init" : DefaultHostPopupInit,
-                "store" : DefaultHostPopupStore,
-                "summary" : HostTableEntrySummary,
-                        ],
-*/
-//              "option_delete" : HostTableEntryDelete,
-//              "add_items" : maplist( string key, any value, (map<string,any>)union( getHostOptions(), popups ), ``(key) ),
               "help" : HELPS["reg_files"]:""
              ]
             ),
 
 ];
 
+//server table functions
 
+define string EnableServiceSummary ( any opt_id, string opt_key)
+{
+ y2internal("enSerSumm %1, %2", opt_id, opt_key);
+ return _("Yes");
+}
+
+define void tableInit (any option_id, string option_type) ``{
+ y2internal("init \n%1\n%2", option_id, option_type);
+ UI::ChangeWidget (`id (option_type), `Value, "inserted text");
+}
+
+define string tableSummary (any option_id, string option_type)``{
+ return SlpServer::slp_config[option_type]:"";
+}
+
+define void initTable (string key) ``{
+ y2internal("init %1", key);
+
+    TablePopup::TableInit (CWM::GetProcessedWidget (), key);
+}
+
+
+define map getOptions() ``{
+ y2internal("get opt");
+ return $[];
+//    "enable_service" : $[
+//        "table" : $[
+//         "label" : _("Enable DHCP server at boot time"),
+//         "summary" : EnableServiceSummary,
+//        ]]];
+}
+//list options = [ $["0":$["asdf":"sdf"]] ];
+
+define list valuesTable (map descr) {
+ y2internal("values table %1", descr);
+ list keys = [];
+ foreach(string k1, any v1, SlpServer::slp_config, { keys =add(keys, k1);});
+ y2internal("config %1", keys);
+ return keys;
+}
+
+define string Id2Key( map desc, any option_id ) ``{
+// y2internal("id2key %1\n%2", desc, option_id);
+ return (string) option_id;
+}
+
+//server table functions
 
 // description map for tabs in overview dialog
 map tabs_descr = $[
@@ -146,7 +217,7 @@ map tabs_descr = $[
 			    `VBox(
 				"server_settings",
 				`VSpacing (2),
-				`PushButton(_("Expert Settings")),
+				"expert",
 				`VSpacing (2)
 				),
                            `HSpacing (1),
@@ -154,7 +225,26 @@ map tabs_descr = $[
 			       ),
 			  `VStretch()
 			),
-	 "widget_names"	: [ "server_settings" ]
+	 "widget_names"	: [ "server_settings", "expert" ]
+	],
+	"server_details"	: $[
+		"header" : _("Server Details"),
+		"contents" : 
+			`VBox(
+			`VStretch(),
+			`HBox(
+                           `HStretch(),
+                           `HSpacing (1),
+			   `VBox(
+				"server_table",
+				`VSpacing (2)
+				),
+                           `HStretch(),
+                           `HSpacing (1)
+			),
+			`VStretch()
+			),
+		"widget_names"	: [ "server_table" ]
 	],
 	"static"	: $[
 		"header" : _("Static Configuration Files"),
@@ -191,7 +281,7 @@ any OverviewDialog() {
             "tab_order": [ "general", "server", "static" ],
             "tabs": tabs_descr,
             "widget_descr": widgets,
-            "initial_tab" : "general",
+            "initial_tab" : current_tab,
             "tab_help" : _("help for tab"),
         ]),
     ];
@@ -204,7 +294,6 @@ any OverviewDialog() {
     Wizard::SetContentsButtons(caption, contents, help, Label::NextButton (), Label::FinishButton ());
     Wizard::HideBackButton();
 
-	y2internal("%1", SlpServer::slp_config);
     symbol ret = CWM::Run(w, $[`abort:ReallyAbort ]);
 
     return ret;
@@ -214,22 +303,25 @@ any OverviewDialog() {
  * General dialog
  * @return dialog result
  */
-any GeneralDialog () {
+any ExpertDialog () {
+    current_tab="server";
+    string caption = _("SlpServer Configuration - Expert Dialog");
 
-    /* SlpServer configure1 dialog caption */
-    string caption = _("SlpServer Configuration");
-
-    /* SlpServer configure1 dialog contents */
-    term contents = `Label (_("First part of configuration of slp-server"));
-
-    Wizard::SetContentsButtons(caption, contents, HELPS["general"]:"",
+    list<map <string, any> > w = CWM::CreateWidgets (["server_table"], (map <string, map <string, any> >)widgets);
+        term contents = `HBox (`HSpacing (1), `VBox (
+            `VSpacing (1),
+            w[0, "widget"]:`VSpacing (1)
+        ), `HSpacing (1));
+    string help = CWM::MergeHelps(w);
+    contents = CWM::PrepareDialog(contents, w);
+    Wizard::SetContentsButtons(caption, contents, HELPS["expert"]:"",
 	    Label::BackButton(), Label::NextButton());
 
-    any ret = nil;
+    any ret = CWM::Run(w, $[`abort:ReallyAbort ]);
+/*
     while(true) {
 
 	ret = UI::UserInput();
-	/* abort? */
 	if(ret == `abort || ret == `cancel) {
 	    if(ReallyAbort()) break;
 	    else continue;
@@ -242,10 +334,9 @@ any GeneralDialog () {
             continue;
         }
     }
-
+*/
     return ret;
 }
-
 /**
  * Server dialog
  * @return dialog result
@@ -342,7 +433,46 @@ define symbol handleServerSettings(string key, map event ) ``{
  return nil;
 }
 
+void initExpertTab (string key);
 
+map<string, any> hostwidget = (map<string, any>)TablePopup::CreateTableDescr (
+            $["add_delete_buttons" : true,
+              "up_down_buttons" : false,
+              "unique_keys" : false]
+        , $[
+            "init" : initExpertTab,
+//            "handle" : handleHostTable,
+//            "store" : HostStore,
+//            "validate_type" : `function,
+//            "validate_function" : validate_server_fnc,
+            "options" : SlpServer::slp_config,
+//            "ids" : HostTableContents,
+//            "id2key" : HostId2Key,
+//            "fallback" : $[
+//                "init" : DefaultHostPopupInit,
+//                "store" : DefaultHostPopupStore,
+//                "summary" : HostTableEntrySummary,
+//            ],
+//            "option_delete" : HostTableEntryDelete,
+//            "add_items" :
+//                maplist( string key, any value, (map<string,any>)union( getHostOptions(), popups ), ``(key) ),
+            "help" : HELPS["expert_table"]:"",
+        ]);
+define void initExpertTab (string key) ``{
+//    if (key == "DEF_HOST") init_tab = "default_host";
+    TablePopup::TableInit (hostwidget, key);
+}
+
+define symbol handleExpert(string key, map event ) ``{
+
+ if (event["ID"]:nil == `expert)
+  {
+//	TablePopup::TableInit (hostwidget, key);
+   y2internal("Expert settings");
+   return `expert;
+  }
+ return nil;
+}
 
 /* EOF */
 }

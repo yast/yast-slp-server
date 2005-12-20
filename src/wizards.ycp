@@ -17,33 +17,6 @@ import "Wizard";
 include "slp-server/complex.ycp";
 include "slp-server/dialogs.ycp";
 
-/**
- * Add a configuration of slp-server
- * @return sequence result
- */
-any AddSequence() {
-
-    /* FIXME: adapt to your needs */
-    map aliases = $[
-	"general"	: ``(GeneralDialog()),
-	"server"	: ``(ServerDialog()),
-    ];
-
-    /* FIXME: adapt to your needs */
-    map sequence = $[
-	"ws_start" : "general",
-	"general" : $[
-	    `abort	: `abort,
-	    `next	: "server"
-	],
-	"server" : $[
-	    `abort	: `abort,
-	    `next	: `next
-	]
-    ];
-
-    return Sequencer::Run(aliases, sequence);
-}
 
 /**
  * Main workflow of the slp-server configuration
@@ -55,9 +28,7 @@ any MainSequence() {
     map aliases = $[
 	"summary"	:   ``( SummaryDialog() ),
 	"overview"	:   ``( OverviewDialog() ),
-	"configure"	: [ ``( AddSequence() ), true ],
-	"add"		: [ ``( AddSequence() ), true ],
-	"edit"		: [ ``( AddSequence() ), true ]
+	"expert"	:   ``( ExpertDialog() )
     ];
 
     /* FIXME: adapt to your needs */
@@ -67,26 +38,16 @@ any MainSequence() {
 	    `abort	: `abort,
 	    `next	: `next,
 	    `overview	: "overview",
-	    `configure	: "configure",
-	    `other	: "configure",
+	    `expert	: "expert"
 	],
 	"overview" : $[
 	    `abort	: `abort,
 	    `next	: `next,
-	    `add	: "add",
-	    `edit	: "edit",
+	    `expert	: "expert"
 	],
-	"configure" : $[
-	    `abort	: `abort,
-	    `next	: "summary",
-	],
-	"add" : $[
-	    `abort	: `abort,
-	    `next	: "overview",
-	],
-	"edit" : $[
-	    `abort	: `abort,
-	    `next	: "overview",
+	"expert" : $[
+            `abort      : `abort,
+            `next       : `next,
 	]
     ];
 
