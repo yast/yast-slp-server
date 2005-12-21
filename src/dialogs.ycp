@@ -38,6 +38,8 @@ void rowStore (any option_id, string option_type);
 boolean rowDelete (any opt_id, string opt_key);
 symbol tableHandle (string table, map event);
 void storeExpert (string key, map event);
+boolean validateServerSettings(string key, map event);
+
 string current_tab="general";
 list keys = [];
 map<string, any> copy_config=$[];
@@ -100,6 +102,8 @@ map<string, map <string, any> > widgets = $[
         "init"   : initServerSettings,
         "handle" : handleServerSettings,
 	"store"  : storeServerSettings,
+        "validate_type" : `function,
+        "validate_function" : validateServerSettings,
         "label"  : _("Settings of SLP server"),
         "help" : HELPS["custom_settings"]:""
         ],
@@ -447,6 +451,32 @@ void changeResponseTo(symbol resp){
 
 }
 
+define boolean validateServerSettings (string key, map event)
+{
+
+ if (UI::QueryWidget(`id(`resp), `CurrentButton) == `da) 
+  {
+   if ( UI::QueryWidget(`id(`ip), `Value)=="" || UI::QueryWidget(`id(`scope), `Value)=="" )
+    {
+     Popup::Error (_("Scope and IP Address Must Be Inserted."));
+     return false;
+    }
+  }
+
+ if (UI::QueryWidget(`id(`resp), `CurrentButton) == `mc)
+  {
+   if ( UI::QueryWidget(`id(`scope), `Value)=="" )
+    {
+     Popup::Error (_("Scope Must Be Inserted."));
+     return false;
+    }
+  }
+
+// Popup::Error ();
+ return true;
+}
+
+
 define void initServerSettings(string key) ``{
  symbol mode = nil;
 // copy_config = SlpServer::slp_config;
@@ -470,6 +500,7 @@ define symbol handleServerSettings(string key, map event ) ``{
   {
    changeResponseTo(event["WidgetID"]:`nil);
   }
+
  return nil;
 }
 

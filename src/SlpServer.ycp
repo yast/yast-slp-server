@@ -128,15 +128,6 @@ boolean WriteGlobalConfig(){
 	 }
 	return v2;
 	});
-//   foreach( map<string, any > v2, (list < map<string, any> >) SETTINGS["value"]:nil, {
-//   if (v2["name"]:"" == k1) 
-//    {
-//	any position=search(v2, (list < map<string, any> >) SETTINGS["value"]:nil);
-//	y2internal("search %1", position);
-//     if (v1 == nil) SETTINGS["value", ]
-//	y2internal("SETTINGS %1 \n%2", v2, v1);
-//    }
-//   });
   });
 
   SCR::Write(.etc.slp.all, SETTINGS);
@@ -194,7 +185,6 @@ global boolean Read() {
 //    sleep(sl);
 
     // read another database
-/*
     if(Abort()) return false;
     Progress::NextStep();
     if(false) Report::Error(_("Cannot read database2."));
@@ -210,7 +200,6 @@ global boolean Read() {
     Progress::NextStage();
     if(false) Report::Warning(_("Cannot detect devices."));
     sleep(sl);
-*/
 
     if(Abort()) return false;
     Progress::NextStage();
