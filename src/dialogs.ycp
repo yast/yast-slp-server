@@ -27,7 +27,7 @@ void initServerSettings(string key);
 symbol handleServerSettings(string key, map event );
 symbol handleShowLog(string key, map event );
 symbol handleExpert(string key, map event );
-void initTable (string key);
+void initExpert (string key);
 list valuesTable (map descr);
 string Id2Key( map desc, any option_id );
 map getOptions();
@@ -39,10 +39,16 @@ boolean rowDelete (any opt_id, string opt_key);
 symbol tableHandle (string table, map event);
 void storeExpert (string key, map event);
 boolean validateServerSettings(string key, map event);
+void initReg (string key);
+string rowRegSummary (any option_id, string option_type);
+string Id2RegKey( map desc, any option_id );
+list valuesRegTable (map descr);
 
 string current_tab="general";
 list keys = [];
 map<string, any> copy_config=$[];
+map<string, any> reg_files_pkg=$[];
+
 
 map<string, map <string, any> > widgets = $[
             "auto_start_up" : CWMServiceStart::CreateAutoStartWidget ($[
@@ -111,7 +117,7 @@ map<string, map <string, any> > widgets = $[
            TablePopup::CreateTableDescr (
             $["add_delete_buttons" : true, "up_down_buttons" : false, "unique_keys" : true],
              $[
-              "init" : initTable,
+              "init" : initExpert,
               "store" : storeExpert,
               "options" : getOptions(),
               "ids" : valuesTable,
@@ -131,6 +137,15 @@ map<string, map <string, any> > widgets = $[
            TablePopup::CreateTableDescr (
             $["add_delete_buttons" : true, "up_down_buttons" : false, "unique_keys" : false],
              $[
+	      "init" : initReg,
+              "id2key" : Id2RegKey,
+              "ids" : valuesRegTable,
+               "fallback" : $[
+//			"init" : rowRegInit,
+//			"store" : rowStore,
+			"summary" : rowRegSummary,
+                        ],
+
               "help" : HELPS["reg_files"]:""
              ]
             ),
@@ -146,7 +161,6 @@ define string EnableServiceSummary ( any opt_id, string opt_key)
 }
 
 define void rowInit (any option_id, string option_type) ``{
- y2internal("init \n%1\n%2", option_id, option_type);
  UI::ChangeWidget (`id (option_type), `Value, copy_config[option_type]:"");
 }
 
@@ -164,9 +178,7 @@ boolean rowDelete (any opt_id, string opt_key)``{
  return true;
 }
 
-define void initTable (string key) ``{
- y2internal("init %1", key);
-
+define void initExpert (string key) ``{
     TablePopup::TableInit (CWM::GetProcessedWidget (), key);
 }
 
@@ -218,6 +230,35 @@ define string Id2Key( map desc, any option_id ) ``{
 define void storeExpert (string key, map event) ``{
  SlpServer::slp_config = copy_config;
 }
+
+define void initReg (string key) ``{
+    TablePopup::TableInit (CWM::GetProcessedWidget (), key);
+}
+
+define string rowRegSummary (any option_id, string option_type)``{
+
+ return reg_files_pkg[option_type]:"";
+}
+
+define string Id2RegKey( map desc, any option_id ) ``{
+ return (string) option_id;
+}
+
+define list valuesRegTable (map descr) {
+ keys = [];
+ keys = maplist(map<string, any> file, SlpServer::reg_files, {return file["name"]:"";});
+ y2internal("config %1", keys);
+
+ foreach(string f, (list<string>)keys, {
+         map res = (map)SCR::Execute(.target.bash_output, "rpm -qf "+f);
+	 if (res["exit"]:0 == 1) reg_files_pkg[f] = "";
+		else reg_files_pkg[f]=res["stdout"]:"";
+         y2internal("result %1", reg_files_pkg);
+        });
+
+ return keys;
+}
+
 
 //server table functions
 
@@ -291,18 +332,7 @@ map tabs_descr = $[
 		"header" : _("Static Configuration Files"),
 		"contents" : 
 			`VBox(
-			`VStretch(),
-			`HBox(
-                           `HStretch(),
-                           `HSpacing (1),
-			   `VBox(
-				"reg_table",
-				`VSpacing (2)
-				),
-                           `HStretch(),
-                           `HSpacing (1)
-			),
-			`VStretch()
+				"reg_table"
 			),
 		"widget_names"	: [ "reg_table" ]
 	]

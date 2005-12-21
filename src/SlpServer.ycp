@@ -96,19 +96,24 @@ global map<string, any> slp_config = $[
 
 	];
 
+map <string, any> REGFILES = $[];
+global list<map <string, any> > reg_files = [];
+
 boolean ReadGlobalConfig(){
 
   SETTINGS = (map <string, any>)SCR::Read(.etc.slp.all);
+  REGFILES = (map <string, any>)SCR::Read(.etc.slp.reg.all);
 
   foreach(string k1, any v1, SETTINGS, {
-
- if (k1 == "value") {
-   foreach(map<string, any > v2, (list < map<string, any> >)v1, {
-    if (v2["type"]:nil == 1) slp_config[v2["name"]:""]=v2["value"]:"";
-   });
-  }
- });
+   if (k1 == "value") {
+    foreach(map<string, any > v2, (list < map<string, any> >)v1, {
+     if (v2["type"]:nil == 1) slp_config[v2["name"]:""]=v2["value"]:"";
+    });
+   }
+  });
  y2milestone("Values from /etc/slp.conf : %1", slp_config);
+ reg_files = (list<map <string, any> >) REGFILES["value"]:[];
+y2internal("%1", reg_files);
  return true;
 }
 
