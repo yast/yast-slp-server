@@ -93,11 +93,13 @@ _("<p><b><big>Selecting Something</big></b><br>
 It is not possible. You must code it first. :-)
 </p>"),
 
-   "service" : _("Help for service enable / disable"),
-   "firewall_adapt" : _("Help for firewall"),
-   "ip_address"	 : _("Help for IP address"),
-   "response"	: _("Help for response"),
-   "scopes"	: _("Help for scopes")
+   "show_log" : _("<p>To show slpd log file push <b>Show Log</b> button.</p>"),
+
+   "server_settings" : _("Help For Server Settings"),
+
+   "expert" : _("Help For Expert Settings"),
+
+   "reg_files" : _("Help For Static Registration Files")
 ];
 
 /* EOF */

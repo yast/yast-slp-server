@@ -105,7 +105,7 @@ map<string, map <string, any> > widgets = $[
         "validate_type" : `function,
         "validate_function" : validateServerSettings,
         "label"  : _("Settings of SLP server"),
-        "help" : HELPS["custom_settings"]:""
+        "help" : HELPS["server_settings"]:""
         ],
 	"server_table" :
            TablePopup::CreateTableDescr (
@@ -323,7 +323,7 @@ any OverviewDialog() {
             "tabs": tabs_descr,
             "widget_descr": widgets,
             "initial_tab" : current_tab,
-            "tab_help" : _("help for tab"),
+            "tab_help" : _("<h1>SLP Server</h1>"),
         ]),
     ];
     term contents = `VBox( "tab"/*, `VStretch ()*/);
