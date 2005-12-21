@@ -43,6 +43,7 @@ void initReg (string key);
 string rowRegSummary (any option_id, string option_type);
 string Id2RegKey( map desc, any option_id );
 list valuesRegTable (map descr);
+boolean deleteReg (any opt_id, string opt_key);
 
 string current_tab="general";
 list keys = [];
@@ -140,6 +141,7 @@ map<string, map <string, any> > widgets = $[
 	      "init" : initReg,
               "id2key" : Id2RegKey,
               "ids" : valuesRegTable,
+              "option_delete" : deleteReg,
                "fallback" : $[
 //			"init" : rowRegInit,
 //			"store" : rowStore,
@@ -229,6 +231,7 @@ define string Id2Key( map desc, any option_id ) ``{
 
 define void storeExpert (string key, map event) ``{
  SlpServer::slp_config = copy_config;
+ keys=[];
 }
 
 define void initReg (string key) ``{
@@ -245,18 +248,31 @@ define string Id2RegKey( map desc, any option_id ) ``{
 }
 
 define list valuesRegTable (map descr) {
- keys = [];
- keys = maplist(map<string, any> file, SlpServer::reg_files, {return file["name"]:"";});
- y2internal("config %1", keys);
+ if (size(keys)==0)
+  {
+   keys = maplist(map<string, any> file, SlpServer::reg_files, {return file["name"]:"";});
+   y2internal("config %1", keys);
 
- foreach(string f, (list<string>)keys, {
+   foreach(string f, (list<string>)keys, {
          map res = (map)SCR::Execute(.target.bash_output, "rpm -qf "+f);
 	 if (res["exit"]:0 == 1) reg_files_pkg[f] = "";
 		else reg_files_pkg[f]=res["stdout"]:"";
-         y2internal("result %1", reg_files_pkg);
-        });
-
+          });
+ }
+ y2internal("keys %1", keys);
  return keys;
+}
+
+
+boolean deleteReg (any opt_id, string opt_key)``{
+ y2internal("delete %1 - %2", opt_id, opt_key);
+ if (reg_files_pkg[opt_key]:"" == "")
+  {
+   keys=filter(string val, (list<string>)keys, {return (val!=opt_key);});
+   return true;
+  }
+   else
+    return false;
 }
 
 
