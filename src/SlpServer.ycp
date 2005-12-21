@@ -115,8 +115,29 @@ boolean ReadGlobalConfig(){
 
 boolean WriteGlobalConfig(){
 
+  foreach(string k1, any v1, slp_config, {
+   y2internal("slp_config %1 %2", k1, v1);
+    SETTINGS["value"] = maplist(map<string, any > v2, (list < map<string, any> >) SETTINGS["value"]:nil, {
+	if (k1 == v2["name"]:"")
+	 {
+	  if (v1 == nil) v2["type"]=0;
+		else v2["type"]=1;
+	 }
+	return v2;
+	});
+//   foreach( map<string, any > v2, (list < map<string, any> >) SETTINGS["value"]:nil, {
+//   if (v2["name"]:"" == k1) 
+//    {
+//	any position=search(v2, (list < map<string, any> >) SETTINGS["value"]:nil);
+//	y2internal("search %1", position);
+//     if (v1 == nil) SETTINGS["value", ]
+//	y2internal("SETTINGS %1 \n%2", v2, v1);
+//    }
+//   });
+  });
+
   SCR::Write(.etc.slp.all, SETTINGS);
-y2internal("write - %1", SETTINGS);
+//y2internal("write - %1", SETTINGS);
 
  return true;
 }

@@ -31,9 +31,11 @@ void initTable (string key);
 list valuesTable (map descr);
 string Id2Key( map desc, any option_id );
 map getOptions();
+void storeServerSettings(string option_id, map option_map);
 string rowSummary (any option_id, string option_type);
 void rowInit (any option_id, string option_type);
 void rowStore (any option_id, string option_type);
+boolean rowDelete (any opt_id, string opt_key);
 symbol tableHandle (string table, map event);
 void storeExpert (string key, map event);
 string current_tab="general";
@@ -97,6 +99,7 @@ map<string, map <string, any> > widgets = $[
                  ),
         "init"   : initServerSettings,
         "handle" : handleServerSettings,
+	"store"  : storeServerSettings,
         "label"  : _("Settings of SLP server"),
         "help" : HELPS["custom_settings"]:""
         ],
@@ -114,7 +117,7 @@ map<string, map <string, any> > widgets = $[
                 "store" : rowStore,
                 "summary" : rowSummary,
                         ],
-//              "option_delete" : HostTableEntryDelete,
+              "option_delete" : rowDelete,
               "add_items" : maplist(string k1, any v1, (map<string,any>) getOptions(), ``(k1)),
               "help" : HELPS["server_table"]:""
              ]
@@ -149,6 +152,12 @@ define string rowSummary (any option_id, string option_type)``{
 
 void rowStore (any option_id, string option_type) ``{
  copy_config[option_type]=(string)UI::QueryWidget (`id (option_type), `Value);
+}
+
+boolean rowDelete (any opt_id, string opt_key)``{
+ y2internal("delete %1 - %2", opt_id, opt_key);
+ copy_config[opt_key] = nil;
+ return true;
 }
 
 define void initTable (string key) ``{
@@ -192,7 +201,7 @@ define map getOptions() ``{
 }
 
 define list valuesTable (map descr) {
- y2internal("values table %1", descr);
+// y2internal("values table %1", descr);
  keys = [];
  foreach(string k1, any v1, copy_config, { if (v1 != nil) keys =add(keys, k1);});
  y2internal("config %1", keys);
@@ -205,9 +214,9 @@ define string Id2Key( map desc, any option_id ) ``{
 }
 
 define void storeExpert (string key, map event) ``{
- y2internal("store %1, %2", key, event);
+// y2internal("store %1, %2", key, event);
  SlpServer::slp_config = copy_config;
-y2internal("slp config %1", SlpServer::slp_config);
+//y2internal("slp config %1", SlpServer::slp_config);
 }
 
 //server table functions
@@ -328,6 +337,7 @@ any OverviewDialog() {
 
     symbol ret = CWM::Run(w, $[`abort:ReallyAbort ]);
 
+
     return ret;
 }
 
@@ -405,6 +415,10 @@ define symbol handleShowLog(string key, map event ) ``{
   }
  return nil;
 }
+
+void storeServerSettings(string option_id, map option_map) ``{
+ y2internal("store - %1", copy_config);
+};
 // Server Setting Dialog
 
 void changeResponseTo(symbol resp){
@@ -430,7 +444,6 @@ void changeResponseTo(symbol resp){
                 UI::ChangeWidget(`id(`ip), `Enabled, false);
                 UI::ChangeWidget(`id(`scope), `Enabled, false);
 		SlpServer::slp_config["net.slp.isda"]="true";
-		SlpServer::slp_config["net.slp.isbroadcastonly"]=nil;
                 break;
    }
 
@@ -438,6 +451,7 @@ void changeResponseTo(symbol resp){
 
 define void initServerSettings(string key) ``{
  symbol mode = nil;
+// copy_config = SlpServer::slp_config;
  y2internal("Initialize server settings");
  UI::ChangeWidget(`id(`ip), `Value, SlpServer::slp_config["net.slp.daaddresses"]:"");
  UI::ChangeWidget(`id(`scope), `Value, SlpServer::slp_config["net.slp.usescopes"]:"");
