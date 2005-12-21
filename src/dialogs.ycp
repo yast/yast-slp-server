@@ -201,7 +201,6 @@ define map getOptions() ``{
 }
 
 define list valuesTable (map descr) {
-// y2internal("values table %1", descr);
  keys = [];
  foreach(string k1, any v1, copy_config, { if (v1 != nil) keys =add(keys, k1);});
  y2internal("config %1", keys);
@@ -209,14 +208,11 @@ define list valuesTable (map descr) {
 }
 
 define string Id2Key( map desc, any option_id ) ``{
- y2internal("id2key %1", option_id);
  return (string) option_id;
 }
 
 define void storeExpert (string key, map event) ``{
-// y2internal("store %1, %2", key, event);
  SlpServer::slp_config = copy_config;
-//y2internal("slp config %1", SlpServer::slp_config);
 }
 
 //server table functions
@@ -418,6 +414,8 @@ define symbol handleShowLog(string key, map event ) ``{
 
 void storeServerSettings(string option_id, map option_map) ``{
  y2internal("store - %1", copy_config);
+ SlpServer::slp_config["net.slp.usescopes"]=UI::QueryWidget(`id(`scope), `Value);
+ SlpServer::slp_config["net.slp.daaddresses"]=UI::QueryWidget(`id(`ip), `Value);
 };
 // Server Setting Dialog
 

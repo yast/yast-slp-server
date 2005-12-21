@@ -121,7 +121,10 @@ boolean WriteGlobalConfig(){
 	if (k1 == v2["name"]:"")
 	 {
 	  if (v1 == nil) v2["type"]=0;
-		else v2["type"]=1;
+		else {
+		 v2["type"]=1;
+		 v2["value"]=v1;
+		 }
 	 }
 	return v2;
 	});
