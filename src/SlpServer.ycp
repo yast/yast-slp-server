@@ -98,7 +98,7 @@ global map<string, any> slp_config = $[
 
 boolean ReadGlobalConfig(){
 
-  SETTINGS = (map <string, any>)SCR::Read(.slp.all);
+  SETTINGS = (map <string, any>)SCR::Read(.etc.slp.all);
 
   foreach(string k1, any v1, SETTINGS, {
 
@@ -115,7 +115,7 @@ boolean ReadGlobalConfig(){
 
 boolean WriteGlobalConfig(){
 
-//  SCR::Write(.slp.all, SETTINGS);
+  SCR::Write(.etc.slp.all, SETTINGS);
 y2internal("write - %1", SETTINGS);
 
  return true;
