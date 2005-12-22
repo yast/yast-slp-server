@@ -95,9 +95,13 @@ It is not possible. You must code it first. :-)
 
    "show_log" : _("<p>To show slpd log file push <b>Show Log</b> button.</p>"),
 
-   "server_settings" : _("Help For Server Settings"),
+   "server_settings" : _("<p>Here set the mode SLP daemon will run on. The simplest mode is <b>Broadcast</b>.
+SLP daemon will answer to all requests send by broadcast. Next mode is <b>Multicast</b>. Daemon will answer to queries
+sent by multicast in appropriates SCOPES. In mode <b>DA Server</b> will inform DA servers on specified IP addresses
+about statically and dynamically registrated services. The last options is <b>Becomes DA Server</b>. This is cache server for service
+answers</p>"),
 
-   "expert" : _("Help For Expert Settings"),
+   "expert" : _("<p>By push <b>Expert Settings</b> button all options are available from /etc/slp.conf.</p>"),
 
    "reg_files" : _("Help For Static Registration Files")
 ];

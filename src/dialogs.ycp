@@ -525,6 +525,7 @@ define boolean validateServerSettings (string key, map event)
 
 define void initServerSettings(string key) ``{
  symbol mode = nil;
+ keys = [];
 // copy_config = SlpServer::slp_config;
  y2internal("Initialize server settings");
  UI::ChangeWidget(`id(`ip), `Value, SlpServer::slp_config["net.slp.daaddresses"]:"");
