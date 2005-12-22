@@ -17,9 +17,15 @@ desktop_DATA =			\
 	slp-server.desktop
 
 module_DATA =			\
-	SlpServer.ycp		\
-	SlpServer2.pm
+	SlpServer.ycp		
 
 EXTRA_DIST = $(client_DATA) $(ynclude_DATA) $(module_DATA) $(desktop_DATA)
 
 include $(top_srcdir)/Makefile.am.common
+
+slp-server:
+	ln -sf . slp-server
+
+ycpchook = slp-server
+
+

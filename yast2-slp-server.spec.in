@@ -28,4 +28,5 @@ Summary:	Configuration of slp-server
 @clientdir@/slp-server_*.ycp
 @moduledir@/SlpServer.*
 @desktopdir@/slp-server.desktop
+@scrconfdir@/slp*.scr
 %doc @docdir@
