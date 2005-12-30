@@ -28,9 +28,9 @@ symbol handleServerSettings(string key, map event );
 symbol handleShowLog(string key, map event );
 symbol handleExpert(string key, map event );
 void initExpert (string key);
-list valuesTable (map descr);
+list valuesServTable (map descr);
 string Id2Key( map desc, any option_id );
-map getOptions();
+map getServerOptions();
 void storeServerSettings(string option_id, map option_map);
 string rowSummary (any option_id, string option_type);
 void rowInit (any option_id, string option_type);
@@ -44,11 +44,20 @@ string rowRegSummary (any option_id, string option_type);
 string Id2RegKey( map desc, any option_id );
 list valuesRegTable (map descr);
 boolean deleteReg (any opt_id, string opt_key);
+symbol handleRegTable(string key, map event );
+list valuesRegFile (map descr);
+string Id2RegEditKey( map desc, any option_id );
+void initRegEditExpert (string key);
+list <map<string, any> > reg_file = [];
+string rowRegEditSummary(any option_id, string option_type);
+void rowRegEditInit (any option_id, string option_type);
+void rowRegEditStore (any option_id, string option_type);
 
 string current_tab="general";
 list keys = [];
 map<string, any> copy_config=$[];
 map<string, any> reg_files_pkg=$[];
+string currentRegFile = "";
 
 
 map<string, map <string, any> > widgets = $[
@@ -120,8 +129,8 @@ map<string, map <string, any> > widgets = $[
              $[
               "init" : initExpert,
               "store" : storeExpert,
-              "options" : getOptions(),
-              "ids" : valuesTable,
+              "options" : getServerOptions(),
+              "ids" : valuesServTable,
               "id2key" : Id2Key,
               "fallback" : $[
                 "init" : rowInit,
@@ -129,11 +138,29 @@ map<string, map <string, any> > widgets = $[
                 "summary" : rowSummary,
                         ],
               "option_delete" : rowDelete,
-              "add_items" : maplist(string k1, any v1, (map<string,any>) getOptions(), ``(k1)),
+              "add_items" : maplist(string k1, any v1, (map<string,any>) getServerOptions(), ``(k1)),
               "help" : HELPS["server_table"]:""
              ]
             ),
-
+	"regedit_table" :
+           TablePopup::CreateTableDescr (
+            $["add_delete_buttons" : true, "up_down_buttons" : false, "unique_keys" : true],
+             $[
+              "init" : initRegEditExpert,
+              "store" : storeExpert,
+              "options" : getServerOptions(),
+              "ids" : valuesRegFile,
+              "id2key" : Id2RegEditKey,
+              "fallback" : $[
+                "init" : rowRegEditInit,
+                "store" : rowRegEditStore,
+                "summary" : rowRegEditSummary,
+                        ],
+              "option_delete" : rowDelete,
+              "add_items" : maplist(string k1, any v1, (map<string,any>) getServerOptions(), ``(k1)),
+              "help" : HELPS["server_table"]:""
+             ]
+            ),
         "reg_table" :
            TablePopup::CreateTableDescr (
             $["add_delete_buttons" : true, "up_down_buttons" : false, "unique_keys" : false],
@@ -148,7 +175,8 @@ map<string, map <string, any> > widgets = $[
 			"summary" : rowRegSummary,
                         ],
 
-              "help" : HELPS["reg_files"]:""
+              "help" : HELPS["reg_files"]:"",
+	      "handle" : handleRegTable
              ]
             ),
 
@@ -185,7 +213,7 @@ define void initExpert (string key) ``{
 }
 
 
-define map getOptions() ``{
+define map getServerOptions() ``{
  y2internal("get opt");
  return $[
 	"net.slp.usescopes":$[],
@@ -218,12 +246,23 @@ define map getOptions() ``{
 	];
 }
 
-define list valuesTable (map descr) {
+define list valuesServTable (map descr) {
  keys = [];
  foreach(string k1, any v1, copy_config, { if (v1 != nil) keys =add(keys, k1);});
  y2internal("config %1", keys);
  return keys;
 }
+
+define list valuesRegFile (map descr) {
+ keys = [];
+ foreach(map<string, any> row, reg_file, {
+  foreach(string key, any value, row, {
+  keys = add(keys, key);
+  });
+ });
+ return keys;
+}
+
 
 define string Id2Key( map desc, any option_id ) ``{
  return (string) option_id;
@@ -243,9 +282,40 @@ define string rowRegSummary (any option_id, string option_type)``{
  return reg_files_pkg[option_type]:"";
 }
 
+define string rowRegEditSummary(any option_id, string option_type)``{
+ string ret="";
+ foreach(map<string, any> row, reg_file, {
+  if (size(row[option_type]:"") > 0) ret = row[option_type]:"";
+ });
+ return ret;
+}
+
+define void rowRegEditInit (any option_id, string option_type) ``{
+ string ret="";
+ foreach(map<string, any> row, reg_file, {
+  if (size(row[option_type]:"") > 0) ret = row[option_type]:"";
+ });
+
+ UI::ChangeWidget (`id (option_type), `Value, ret);
+}
+
+void rowRegEditStore (any option_id, string option_type) ``{
+ y2internal("store %1\n%2", option_type, reg_file);
+ foreach(map<string, any> row, reg_file,{
+//  y2internal("%1", row);
+ if (haskey(row, option_type)) y2internal("%1", option_id);
+ });
+}
+
+
 define string Id2RegKey( map desc, any option_id ) ``{
  return (string) option_id;
 }
+
+define string Id2RegEditKey( map desc, any option_id ) ``{
+ return (string) option_id;
+}
+
 
 define list valuesRegTable (map descr) {
  if (size(keys)==0)
@@ -274,6 +344,21 @@ boolean deleteReg (any opt_id, string opt_key)``{
    else
     return false;
 }
+
+
+define void initRegEditExpert(string key) ``{
+
+ foreach(map<string, any> s, SlpServer::reg_files, {if (s["name"]:"" == currentRegFile) {
+	 foreach(map<string, any > row, s["value"]:[], {
+	  y2internal("row - %1 ", row);
+	  reg_file = add(reg_file, $[ row["name"]:"" : row["value"]:"" ]);
+	 });
+	}
+  });
+    TablePopup::TableInit (CWM::GetProcessedWidget (), key);
+}
+
+
 
 
 //server table functions
@@ -409,40 +494,24 @@ any ExpertDialog () {
     any ret = CWM::Run(w, $[`abort:ReallyAbort ]);
     return ret;
 }
-/**
- * Server dialog
- * @return dialog result
- */
-any ServerDialog () {
 
-    /* SlpServer configure2 dialog caption */
-    string caption = _("SlpServer Configuration");
+any editRegFile() {
+y2internal("Edit reg file %1", currentRegFile);
+    current_tab="static";
+//    copy_config = SlpServer::slp_config;
+    string caption = _("SlpServer Configuration - Edit .reg File");
 
-    /* SlpServer configure2 dialog contents */
-    term contents = `Label (_("Second part of configuration of slp-server"));
+    list<map <string, any> > w = CWM::CreateWidgets (["regedit_table"], (map <string, map <string, any> >)widgets);
+        term contents = `HBox (`HSpacing (1), `VBox (
+            `VSpacing (1),
+            w[0, "widget"]:`VSpacing (1)
+        ), `HSpacing (1));
+    string help = CWM::MergeHelps(w);
+    contents = CWM::PrepareDialog(contents, w);
+    Wizard::SetContentsButtons(caption, contents, HELPS["regedit"]:"",
+            Label::BackButton(), Label::NextButton());
 
-    Wizard::SetContentsButtons(caption, contents, HELPS["c2"]:"",
-	    Label::BackButton(), Label::NextButton());
-
-    any ret = nil;
-    while(true) {
-
-	ret = UI::UserInput();
-
-	/* abort? */
-	if(ret == `abort || ret == `cancel) {
-	    if(ReallyAbort()) break;
-	    else continue;
-	}
-        else if(ret == `next || ret == `back) {
-            break;
-        }
-        else {
-            y2error("unexpected retcode: %1", ret);
-            continue;
-        }
-    }
-
+    any ret = CWM::Run(w, $[`abort:ReallyAbort ]);
     return ret;
 }
 
@@ -563,5 +632,15 @@ define symbol handleExpert(string key, map event ) ``{
  return nil;
 }
 
+
+
+define symbol handleRegTable(string key, map event ) ``{
+ if (event["ID"]:nil == `_tp_edit) 
+  {
+   currentRegFile = (string)UI::QueryWidget (`_tp_table, `CurrentItem);
+   return `edit;
+  }
+return nil;
+}
 /* EOF */
 }

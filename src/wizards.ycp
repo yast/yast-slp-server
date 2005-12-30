@@ -28,7 +28,8 @@ any MainSequence() {
     map aliases = $[
 	"summary"	:   ``( SummaryDialog() ),
 	"overview"	:   ``( OverviewDialog() ),
-	"expert"	:   ``( ExpertDialog() )
+	"expert"	:   ``( ExpertDialog() ),
+	"edit_reg"	:   ``( editRegFile() )
     ];
 
     /* FIXME: adapt to your needs */
@@ -43,11 +44,16 @@ any MainSequence() {
 	"overview" : $[
 	    `abort	: `abort,
 	    `next	: `next,
+	    `edit	: "edit_reg",
 	    `expert	: "expert"
 	],
 	"expert" : $[
             `abort      : `abort,
             `next       : "overview",
+	],
+	"edit_reg" : $[
+	   `abort : `abort,
+	   `next  : `next
 	]
     ];
 
