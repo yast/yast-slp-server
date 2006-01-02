@@ -174,13 +174,12 @@ map<string, map <string, any> > widgets = $[
               "ids" : valuesRegTable,
               "option_delete" : deleteReg,
                "fallback" : $[
-//			"init" : rowRegInit,
-//			"store" : rowStore,
 			"summary" : rowRegSummary,
                         ],
 
               "help" : HELPS["reg_files"]:"",
-	      "handle" : handleRegTable
+	      "handle" : handleRegTable,
+//              "option_delete" : rowRegDelete
              ]
             ),
 
@@ -277,13 +276,13 @@ define list valuesServTable (map descr) {
 }
 
 define list valuesRegFile (map descr) {
+
  keys = [];
  foreach(map<string, any> row, reg_file, {
   foreach(string key, map<string, any> value, (map<string, map<string, any> >) row, {
   if ( value["KEY"]:"" != "") keys = add(keys, key);
   });
  });
-y2internal("%1", keys);
  return keys;
 }
 
@@ -299,6 +298,8 @@ y2internal("storing ...");
 }
 
 define void initReg (string key) ``{
+    keys = [];
+    reg_file=[];
     TablePopup::TableInit (CWM::GetProcessedWidget (), key);
 }
 
@@ -389,7 +390,6 @@ boolean deleteReg (any opt_id, string opt_key)``{
 
 define void initRegEditExpert(string key) ``{
  integer count = 0;
-y2internal("%1", SlpServer::reg_files);
  foreach(map<string, any> s, SlpServer::reg_files, {if (s["name"]:"" == currentRegFile) {
 	 foreach(map<string, any > row, s["value"]:[], {
 	  reg_file = add(reg_file, 
