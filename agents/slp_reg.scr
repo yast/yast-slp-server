@@ -14,7 +14,7 @@
 `ag_ini(
     `IniAgent( [ "/etc/slp.reg.d/*.reg" ],
         $[
-        "options" : [ "global_values", "comments_last", "line_can_continue", "join_multiline" ],
+        "options" : [ "global_values", "comments_last", "line_can_continue", "join_multiline", "repeat_names" ],
         "comments": [
             "^[ \t]*$", // empty line
             "^[ \t]+[;#].*$", // comment char is not first char
