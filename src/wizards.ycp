@@ -53,7 +53,7 @@ any MainSequence() {
 	],
 	"edit_reg" : $[
 	   `abort : `abort,
-	   `next  : `next
+	   `next  : "overview"
 	]
     ];
 

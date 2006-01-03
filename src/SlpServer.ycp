@@ -134,10 +134,15 @@ boolean WriteGlobalConfig(){
 	return v2;
 	});
   });
-
+/*
+y2internal("reg_files %1", reg_files);
+y2internal("##########################################");
+y2internal("REGFILES %1", REGFILES);
+*/
+  REGFILES["value"] = reg_files;
   SCR::Write(.etc.slp.all, SETTINGS);
 //y2internal("write - %1", SETTINGS);
-
+  SCR::Write(.etc.slp.reg.all, REGFILES);
  return true;
 }
 

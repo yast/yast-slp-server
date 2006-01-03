@@ -40,6 +40,7 @@ boolean rowDelete (any opt_id, string opt_key);
 boolean rowRegEditDelete (any opt_id, string opt_key);
 symbol tableHandle (string table, map event);
 void storeExpert (string key, map event);
+void storeRegEdit (string key, map event);
 boolean validateServerSettings(string key, map event);
 void initReg (string key);
 string rowRegSummary (any option_id, string option_type);
@@ -150,7 +151,7 @@ map<string, map <string, any> > widgets = $[
             $["add_delete_buttons" : true, "up_down_buttons" : false, "unique_keys" : false],
              $[
               "init" : initRegEditExpert,
-              "store" : storeExpert,
+              "store" : storeRegEdit,
               "options" : getRegEditOptions(),
               "ids" : valuesRegFile,
               "id2key" : Id2RegEditKey,
@@ -295,6 +296,38 @@ define void storeExpert (string key, map event) ``{
 y2internal("storing ...");
  SlpServer::slp_config = copy_config;
  keys=[];
+}
+
+define void storeRegEdit (string key, map event) ``{
+
+ SlpServer::reg_files = maplist(map<string, any> file, SlpServer::reg_files, {
+  if ( file["name"]:"" == currentRegFile )
+   {
+
+    integer count = 0;
+    file["value"] = maplist(map<string, any> line, file["value"]:[], {
+//    if ( (reg_file[count]:nil)[tostring(count), "KEY"]:"" == line["name"]:"")
+						line["value"] = (reg_file[count]:nil)[tostring(count), "VALUE"]:"";
+						line["name"] = (reg_file[count]:nil)[tostring(count), "KEY"]:"";
+     count = count + 1;
+     return line;
+    });
+
+   while ( count < size(reg_file) ){
+	file["value"] = add(file["value"]:[], $[
+	"name" : (reg_file[count]:nil)[tostring(count), "KEY"]:"",
+	"value" : (reg_file[count]:nil)[tostring(count), "VALUE"]:"",
+	"type" : 1,
+	"kind" : "value",
+	"comment" : ""
+	]);
+	count = count + 1;
+y2internal("%1", file);
+   }
+
+   }
+  return file;
+ });
 }
 
 define void initReg (string key) ``{
