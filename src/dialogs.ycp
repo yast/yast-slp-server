@@ -205,7 +205,7 @@ void rowStore (any option_id, string option_type) ``{
 }
 
 boolean rowDelete (any opt_id, string opt_key)``{
- y2internal("delete %1 - %2", opt_id, opt_key);
+// y2internal("delete %1 - %2", opt_id, opt_key);
  copy_config[opt_key] = nil;
  return true;
 }
@@ -272,7 +272,7 @@ define map getRegEditOptions() ``{
 define list valuesServTable (map descr) {
  keys = [];
  foreach(string k1, any v1, copy_config, { if (v1 != nil) keys =add(keys, k1);});
- y2internal("config %1", keys);
+// y2internal("config %1", keys);
  return keys;
 }
 
@@ -293,7 +293,7 @@ define string Id2Key( map desc, any option_id ) ``{
 }
 
 define void storeExpert (string key, map event) ``{
-y2internal("storing ...");
+//y2internal("storing ...");
  SlpServer::slp_config = copy_config;
  keys=[];
 }
@@ -322,7 +322,6 @@ define void storeRegEdit (string key, map event) ``{
 	"comment" : ""
 	]);
 	count = count + 1;
-y2internal("%1", file);
    }
 
    }
@@ -351,7 +350,7 @@ define string rowRegEditSummary(any option_id, string option_type)``{
 }
 
 define void rowRegEditInit (any option_id, string option_type) ``{
-y2internal("rrei %1, %2", option_id, option_type);
+//y2internal("rrei %1, %2", option_id, option_type);
  string ret="";
  if (option_id != nil)
   {
@@ -363,7 +362,7 @@ y2internal("rrei %1, %2", option_id, option_type);
 }
 
 void rowRegEditStore (any option_id, string option_type) ``{
- y2internal("rres %1, %2", option_id, option_type);
+// y2internal("rres %1, %2", option_id, option_type);
   if (option_id != nil)
    {
     reg_file = maplist(map<string, any> s, reg_file, {
@@ -395,8 +394,10 @@ define string Id2RegEditKey( map desc, any option_id ) ``{
 define list valuesRegTable (map descr) {
  if (size(keys)==0)
   {
-   keys = maplist(map<string, any> file, SlpServer::reg_files, {return file["name"]:"";});
-   y2internal("config %1", keys);
+   keys = maplist(map<string, any> file, SlpServer::reg_files, {if (file["value"]:nil != nil) return file["name"]:"";});
+
+   keys = filter(string file, (list<string>)keys, {return (file != nil); });
+y2internal("keys %1", keys);
 
    foreach(string f, (list<string>)keys, {
          map res = (map)SCR::Execute(.target.bash_output, "rpm -qf "+f);
@@ -404,20 +405,17 @@ define list valuesRegTable (map descr) {
 		else reg_files_pkg[f]=res["stdout"]:"";
           });
  }
- y2internal("keys %1", keys);
  return keys;
 }
 
 
 boolean deleteReg (any opt_id, string opt_key)``{
- y2internal("delete %1 - %2", opt_id, opt_key);
  if (reg_files_pkg[opt_key]:"" == "")
   {
    keys=filter(string val, (list<string>)keys, {return (val!=opt_key);});
    return true;
   }
-   else
-    return false;
+   else return false;
 }
 
 
@@ -575,7 +573,7 @@ any ExpertDialog () {
 }
 
 any editRegFile() {
-y2internal("Edit reg file %1", currentRegFile);
+//y2internal("Edit reg file %1", currentRegFile);
     current_tab="static";
 //    copy_config = SlpServer::slp_config;
     string caption = _("SlpServer Configuration - Edit .reg File");
@@ -596,7 +594,7 @@ y2internal("Edit reg file %1", currentRegFile);
 
 //log viewer for General Dialog
 define symbol handleShowLog(string key, map event ) ``{
-	y2internal("%1 %2", key, event);
+//	y2internal("%1 %2", key, event);
  if (event["ID"]:nil == `show_log)
   {
         string log = "";
@@ -611,7 +609,7 @@ define symbol handleShowLog(string key, map event ) ``{
 }
 
 void storeServerSettings(string option_id, map option_map) ``{
- y2internal("store - %1", copy_config);
+// y2internal("store - %1", copy_config);
  SlpServer::slp_config["net.slp.usescopes"]=UI::QueryWidget(`id(`scope), `Value);
  SlpServer::slp_config["net.slp.daaddresses"]=UI::QueryWidget(`id(`ip), `Value);
 };
@@ -675,7 +673,7 @@ define void initServerSettings(string key) ``{
  symbol mode = nil;
  keys = [];
 // copy_config = SlpServer::slp_config;
- y2internal("Initialize server settings");
+// y2internal("Initialize server settings");
  UI::ChangeWidget(`id(`ip), `Value, SlpServer::slp_config["net.slp.daaddresses"]:"");
  UI::ChangeWidget(`id(`scope), `Value, SlpServer::slp_config["net.slp.usescopes"]:"");
  if (SlpServer::slp_config["net.slp.isda"]:"" == "true") mode = `da_server;
@@ -705,7 +703,7 @@ define symbol handleExpert(string key, map event ) ``{
  if (event["ID"]:nil == `expert)
   {
 //	TablePopup::TableInit (hostwidget, key);
-   y2internal("Expert settings");
+//   y2internal("Expert settings");
    return `expert;
   }
  return nil;
@@ -713,7 +711,7 @@ define symbol handleExpert(string key, map event ) ``{
 
 
 define symbol handleRegEditTable(string key, map event ) ``{
-y2internal("handle %1\n%2", key, event);
+//y2internal("handle %1\n%2", key, event);
  if (event["ID"]:nil == `_tp_edit) 
   {
    currentRegFile = (string)UI::QueryWidget (`_tp_table, `CurrentItem);
@@ -722,11 +720,26 @@ return nil;
 }
 
 define symbol handleRegTable(string key, map event ) ``{
- if (event["ID"]:nil == `_tp_edit) 
+ if (event["ID"]:nil == `_tp_edit)
   {
    currentRegFile = (string)UI::QueryWidget (`_tp_table, `CurrentItem);
    return `edit;
   }
+ if (event["ID"]:nil == `_tp_delete)
+ {
+	currentRegFile = (string)UI::QueryWidget (`_tp_table, `CurrentItem);
+  string package = reg_files_pkg[currentRegFile]:"";
+  if (package == "")
+   {
+	SlpServer::reg_files = maplist(map<string, any> s, SlpServer::reg_files, {
+		if (s["name"]:"" == currentRegFile) s["value"]=nil;
+		return s;
+	});
+	initReg("");
+   } else {
+	   Popup::Error(sformat("Reg file %1 is owned by package %2", currentRegFile, package));
+	}
+ }
 return nil;
 }
 /* EOF */
