@@ -58,7 +58,7 @@ void rowRegEditInit (any option_id, string option_type);
 void rowRegEditStore (any option_id, string option_type);
 
 string current_tab="general";
-list keys = [];
+list <string> keys = [];
 map<string, any> copy_config=$[];
 map<string, any> reg_files_pkg=$[];
 string currentRegFile = "";
@@ -740,6 +740,41 @@ define symbol handleRegTable(string key, map event ) ``{
 	   Popup::Error(sformat("Reg file %1 is owned by package %2", currentRegFile, package));
 	}
  }
+ if (event["ID"]:nil == `_tp_add)
+  {
+           UI::OpenDialog(
+            `VBox(
+                // translators: combo box for selsect module from installed unknown modules
+                `TextEntry(`id(`filename), _("Name of new file: ") ),
+                `HBox(
+                    `PushButton(`id(`ok), `opt(`default), Label::OKButton() ),
+                    `PushButton(`id(`cancel), Label::CancelButton() )
+                    )
+                )
+            );
+
+      UI::SetFocus( `id( `filename ) );
+
+            symbol ret = (symbol) UI::UserInput();
+
+            if( ret == `ok ) {
+                string filename = sformat("/etc/slp.reg.d/%1", (string) UI::QueryWidget( `id(`filename), `Value ) );
+		if (contains(keys, filename)){
+		  Popup::Error("File with that name already exists");
+		 } else {
+	SlpServer::reg_files = add(SlpServer::reg_files, $[
+	        "name" : filename,
+	        "value" : [],
+	        "type" : -1,
+		"file" : -1,
+		"kind" : "section",
+	        "comment" : ""
+	        ]);
+		}
+            }
+	UI::CloseDialog();
+	initReg("");
+  }
 return nil;
 }
 /* EOF */
