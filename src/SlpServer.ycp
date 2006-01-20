@@ -22,6 +22,8 @@ import "Message";
 import "SCR";
 import "Service";
 import "SuSEFirewall";
+import "Package";
+import "Popup";
 
 include "slp-server/helps.ycp";
 
@@ -149,6 +151,19 @@ y2internal("REGFILES %1", REGFILES);
 }
 
 
+boolean installed_packages(){
+ boolean ret = false;
+  if( !Package::InstallMsg( "openslp-server",
+	    _("<p>To configure the SLP server, the <b>%1</b> packages must be installed.</p>") +
+	    _("<p>Do you want to install it now?</p>")) )
+	{
+	Popup::Error( Message::CannotContinueWithoutPackagesInstalled() );
+    } else ret = true;
+
+ return ret;
+}
+
+
 /**
  * Read all slp-server settings
  * @return true on success
@@ -210,7 +225,7 @@ global boolean Read() {
     // detect devices
     if(Abort()) return false;
     Progress::NextStage();
-    if(false) Report::Warning(_("Cannot detect devices."));
+    if(!installed_packages()) return false;
     sleep(sl);
 
     if(Abort()) return false;

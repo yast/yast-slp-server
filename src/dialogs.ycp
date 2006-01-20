@@ -162,7 +162,7 @@ map<string, map <string, any> > widgets = $[
                         ],
               "option_delete" : rowRegEditDelete,
               "add_items" : maplist(string k1, any v1, (map<string,any>) getRegEditOptions(), ``(k1)),
-              "help" : HELPS["server_table"]:"",
+//              "help" : HELPS["regedit_table"]:"",
 //	      "handle" : handleRegEditTable
              ]
             ),
@@ -731,11 +731,14 @@ define symbol handleRegTable(string key, map event ) ``{
   string package = reg_files_pkg[currentRegFile]:"";
   if (package == "")
    {
-	SlpServer::reg_files = maplist(map<string, any> s, SlpServer::reg_files, {
+	if (Popup::ContinueCancel(_("Are You Sure To Delete This File?")))
+	 {
+	  SlpServer::reg_files = maplist(map<string, any> s, SlpServer::reg_files, {
 		if (s["name"]:"" == currentRegFile) s["value"]=nil;
 		return s;
-	});
-	initReg("");
+	  });
+	  initReg("");
+	}
    } else {
 	   Popup::Error(sformat("Reg file %1 is owned by package %2", currentRegFile, package));
 	}
