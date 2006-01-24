@@ -64,7 +64,7 @@ symbol WriteDialog() {
 any SummaryDialog() {
 
     /* SlpServer summary dialog caption */
-    string caption = _("SlpServer Configuration");
+    string caption = _("SLP Server Configuration");
 
     /* FIXME */
     list summary = SlpServer::Summary();
@@ -72,7 +72,7 @@ any SummaryDialog() {
     string configured = summary[0]:"";
 
     /* Frame label */
-    term contents = Wizard_hw::DetectedContent(_("SlpServer to Configure"),
+    term contents = Wizard_hw::DetectedContent(_("SLP Server to Configure"),
 	    unconfigured, false, configured);
 
     Wizard::SetContentsButtons(caption, contents, HELPS["summary"]:"",

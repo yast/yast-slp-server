@@ -62,9 +62,9 @@ else if(func == "AskUser") {
 else if(func == "Description") {
     ret = $[
 	/* Rich text title for SlpServer in proposals */
-	"rich_text_title" : _("SlpServer"),
+	"rich_text_title" : _("SLP Server"),
 	/* Menu title for SlpServer in proposals */
-	"menu_title" : _("&SlpServer"),
+	"menu_title" : _("&SLP Server"),
 	"id" : "slp-server",
     ];
 }

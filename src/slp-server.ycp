@@ -31,7 +31,7 @@ include "slp-server/wizards.ycp";
 map cmdline_description = $[
     "id" 	: "slp-server",
     /* Command line help text for the Xslp-server module */
-    "help"	: _("Configuration of slp-server"),
+    "help"	: _("Configuration of an SLP server"),
     "guihandler"        : SlpServerSequence,
     "initialize"        : SlpServer::Read,
     "finish"            : SlpServer::Write,

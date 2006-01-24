@@ -171,7 +171,7 @@ boolean installed_packages(){
 global boolean Read() {
 
     /* SlpServer read dialog caption */
-    string caption = _("Initializing slp-server Configuration");
+    string caption = _("Initializing SLP Server Configuration");
 
     // TODO FIXME Set the right number of stages
     integer steps = 4;
@@ -244,7 +244,7 @@ global boolean Read() {
 global boolean Write() {
 
     /* SlpServer read dialog caption */
-    string caption = _("Saving slp-server Configuration");
+    string caption = _("Saving SLP Server Configuration");
 
     // TODO FIXME And set the right number of stages
     integer steps = 2;

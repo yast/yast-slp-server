@@ -106,7 +106,7 @@ any SlpServerSequence() {
 any SlpServerAutoSequence() {
 
     /* Initialization dialog caption */
-    string caption = _("SlpServer Configuration");
+    string caption = _("SLP Server Configuration");
     /* Initialization dialog contents */
     term contents = `Label(_("Initializing..."));
 

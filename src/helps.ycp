@@ -17,7 +17,7 @@ textdomain "slp-server";
 map HELPS = $[
 
     /* Read dialog help 1/2 */
-    "read" : _("<p><b><big>Initializing slp-server Configuration</big></b><br>
+    "read" : _("<p><b><big>Initializing SLP Server Configuration</big></b><br>
 Please wait...<br></p>
 ") +
 
@@ -27,7 +27,7 @@ Safely abort the configuration utility by pressing <b>Abort</b> now.</p>
 "),
 
     /* Write dialog help 1/2 */
-    "write" : _("<p><b><big>Saving slp-server Configuration</big></b><br>
+    "write" : _("<p><b><big>Saving SLP Server Configuration</big></b><br>
 Please wait...<br></p>
 ") +
 
@@ -39,14 +39,14 @@ An additional dialog informs whether it is safe to do so.
 "),
 
     /* Summary dialog help 1/3 */
-    "summary" : _("<p><b><big>SlpServer Configuration</big></b><br>
-Configure slp-server here.<br></p>
+    "summary" : _("<p><b><big>SLP Server Configuration</big></b><br>
+Configure SLP server here.<br></p>
 ") +
 
     /* Summary dialog help 2/3 */
-    _("<p><b><big>Adding a slp-server:</big></b><br>
-Choose an slp-server from the list of detected slp-servers.
-If your slp-server was not detected, use <b>Other (not detected)</b>.
+    _("<p><b><big>Adding an SLP Server</big></b><br>
+Choose an SLP server from the list of detected SLP servers.
+If your SLP server was not detected, use <b>Other (not detected)</b>.
 Then press <b>Configure</b>.</p>
 ") +
 
@@ -57,18 +57,19 @@ the configuration opens.</p>
 "),
 
     /* Ovreview dialog help 1/3 */
-    "overview" : _("<p><b><big>SlpServer Configuration Overview</big></b><br>
-Obtain an overview of installed slp-servers. Additionally
+    "overview" : _("<p><b><big>SLP Server Configuration Overview</big></b><br>
+Obtain an overview of installed SLP servers. Additionally
 edit their configurations.<br></p>
 ") +
 
     /* Ovreview dialog help 2/3 */
-_("<p><b><big>Adding a slp-server:</big></b><br>
-Press <b>Add</b> to configure a slp-server.</p>") +
+_("<p><b><big>Adding an SLP Server</big></b><br>
+Press <b>Add</b> to configure an SLP server.</p>
+") +
 
     /* Ovreview dialog help 3/3 */
-_("<p><b><big>Editing or Deleting:</big></b><br>
-Choose a slp-server to change or remove.
+_("<p><b><big>Editing or Deleting</big></b><br>
+Choose an SLP server to change or remove.
 Then press <b>Edit</b> or <b>Delete</b> as desired.</p>
 "),
 
@@ -93,15 +94,16 @@ _("<p><b><big>Selecting Something</big></b><br>
 It is not possible. You must code it first. :-)
 </p>"),
 
-   "show_log" : _("<p>To show slpd log file push <b>Show Log</b> button.</p>"),
+   "show_log" : _("<p>To show the slpd log file, use <b>Show Log</b> button.</p>"),
 
-   "server_settings" : _("<p>Here set the mode SLP daemon will run on. The simplest mode is <b>Broadcast</b>.
-SLP daemon will answer to all requests send by broadcast. Next mode is <b>Multicast</b>. Daemon will answer to queries
-sent by multicast in appropriates SCOPES. In mode <b>DA Server</b> will inform DA servers on specified IP addresses
-about statically and dynamically registrated services. The last options is <b>Becomes DA Server</b>. This is cache server for service
-answers</p>"),
+   "server_settings" : _("<p>Here, set the mode in which to run the SLP daemon. The simplest mode is <b>Broadcast</b>.
+In it, the SLP daemon answers all requests sent by broadcast. The next mode is <b>Multicast</b>. In it, the daemon answers queries
+sent by multicast in appropriates SCOPES. In the <b>DA Server</b> mode, it informs DA servers on the specified IP addresses
+about statically and dynamically registrated services. The last options is <b>Becomes DA Server</b>. This is a cache server for service
+answers.</p>
+"),
 
-   "expert" : _("<p>By push <b>Expert Settings</b> button all options are available from /etc/slp.conf.</p>"),
+   "expert" : _("<p>With <b>Expert Settings</b>, access all options available in /etc/slp.conf.</p>"),
 
    "reg_files" : _("Configuration files for static registration to SLP. With <b>Add</b> create new empty file. With <b>Modify</b>
 change values of any existing file. When press <b>Delete</b> is possible to delete only files not owned by any package."),

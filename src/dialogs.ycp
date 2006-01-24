@@ -124,7 +124,7 @@ map<string, map <string, any> > widgets = $[
 	"store"  : storeServerSettings,
         "validate_type" : `function,
         "validate_function" : validateServerSettings,
-        "label"  : _("Settings of SLP server"),
+        "label"  : _("SLP Server Settings"),
         "help" : HELPS["server_settings"]:""
         ],
 	"server_table" :
@@ -523,7 +523,7 @@ map tabs_descr = $[
 any OverviewDialog() {
 
     /* SlpServer overview dialog caption */
-    string caption = _("SlpServer Overview");
+    string caption = _("SLP Server Overview");
 
     map widget_descr = $[
         "tab": CWMTab::CreateWidget($[
@@ -556,7 +556,7 @@ any OverviewDialog() {
 any ExpertDialog () {
     current_tab="server";
     copy_config = SlpServer::slp_config;
-    string caption = _("SlpServer Configuration - Expert Dialog");
+    string caption = _("SLP Server Configuration--Expert Dialog");
 
     list<map <string, any> > w = CWM::CreateWidgets (["server_table"], (map <string, map <string, any> >)widgets);
         term contents = `HBox (`HSpacing (1), `VBox (
@@ -576,7 +576,7 @@ any editRegFile() {
 //y2internal("Edit reg file %1", currentRegFile);
     current_tab="static";
 //    copy_config = SlpServer::slp_config;
-    string caption = _("SlpServer Configuration - Edit .reg File");
+    string caption = _("SLP Server Configuration--Edit .reg File");
 
     list<map <string, any> > w = CWM::CreateWidgets (["regedit_table"], (map <string, map <string, any> >)widgets);
         term contents = `HBox (`HSpacing (1), `VBox (
@@ -650,7 +650,7 @@ define boolean validateServerSettings (string key, map event)
   {
    if ( UI::QueryWidget(`id(`ip), `Value)=="" || UI::QueryWidget(`id(`scope), `Value)=="" )
     {
-     Popup::Error (_("Scope and IP Address Must Be Inserted."));
+     Popup::Error (_("Scope and IP address must be inserted."));
      return false;
     }
   }
@@ -659,7 +659,7 @@ define boolean validateServerSettings (string key, map event)
   {
    if ( UI::QueryWidget(`id(`scope), `Value)=="" )
     {
-     Popup::Error (_("Scope Must Be Inserted."));
+     Popup::Error (_("Scope must be inserted."));
      return false;
     }
   }
@@ -748,7 +748,7 @@ define symbol handleRegTable(string key, map event ) ``{
            UI::OpenDialog(
             `VBox(
                 // translators: combo box for selsect module from installed unknown modules
-                `TextEntry(`id(`filename), _("Name of new file: ") ),
+                `TextEntry(`id(`filename), _("Name of New File") ),
                 `HBox(
                     `PushButton(`id(`ok), `opt(`default), Label::OKButton() ),
                     `PushButton(`id(`cancel), Label::CancelButton() )
