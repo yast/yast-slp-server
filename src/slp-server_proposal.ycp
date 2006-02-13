@@ -4,7 +4,7 @@
  * Summary:	Proposal function dispatcher.
  * Authors:	Zugec Michal <mzugec@suse.cz>
  *
- * $Id: slp-server_proposal.ycp 20583 2004-12-16 10:26:30Z mvidner $
+ * $Id$
  *
  * Proposal function dispatcher for slp-server configuration.
  * See source/installation/proposal/proposal-API.txt

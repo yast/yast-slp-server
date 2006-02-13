@@ -4,7 +4,7 @@
  * Summary:	Main file
  * Authors:	Zugec Michal <mzugec@suse.cz>
  *
- * $Id: slp-server.ycp 18198 2004-07-23 13:42:29Z jsuchome $
+ * $Id$
  *
  * Main file for slp-server configuration. Uses all other files.
  */

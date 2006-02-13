@@ -4,7 +4,7 @@
  * Summary:	SlpServer settings, input and output functions
  * Authors:	Zugec Michal <mzugec@suse.cz>
  *
- * $Id: SlpServer.ycp 23442 2005-05-18 07:46:28Z visnov $
+ * $Id$
  *
  * Representation of the configuration of slp-server.
  * Input and output routines.
