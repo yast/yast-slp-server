@@ -154,7 +154,7 @@ y2internal("REGFILES %1", REGFILES);
 boolean installed_packages(){
  boolean ret = false;
   if( !Package::InstallMsg( "openslp-server",
-	    _("<p>To configure the SLP server, the <b>%1</b> packages must be installed.</p>") +
+	    _("<p>To configure the SLP server, the <b>%1</b> package must be installed.</p>") +
 	    _("<p>Do you want to install it now?</p>")) )
 	{
 	Popup::Error( Message::CannotContinueWithoutPackagesInstalled() );

@@ -731,7 +731,7 @@ define symbol handleRegTable(string key, map event ) ``{
   string package = reg_files_pkg[currentRegFile]:"";
   if (package == "")
    {
-	if (Popup::ContinueCancel(_("Are You Sure To Delete This File?")))
+	if (Popup::ContinueCancel(_("Really delete this file?")))
 	 {
 	  SlpServer::reg_files = maplist(map<string, any> s, SlpServer::reg_files, {
 		if (s["name"]:"" == currentRegFile) s["value"]=nil;
