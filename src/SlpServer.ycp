@@ -24,6 +24,7 @@ import "Service";
 import "SuSEFirewall";
 import "Package";
 import "Popup";
+import "Confirm";
 
 include "slp-server/helps.ycp";
 
@@ -201,6 +202,12 @@ global boolean Read() {
 	""
     );
 
+    // read current settings
+    if(!Confirm::MustBeRoot()) return false;
+    Progress::NextStage();
+    if(false) Report::Error(Message::CannotReadCurrentSettings());
+    sleep(sl);
+
 	Progress::set(false);
 	SuSEFirewall::Read();
 	Progress::set(true);
@@ -217,11 +224,6 @@ global boolean Read() {
     if(false) Report::Error(_("Cannot read database2."));
     sleep(sl);
 
-    // read current settings
-    if(Abort()) return false;
-    Progress::NextStage();
-    if(false) Report::Error(Message::CannotReadCurrentSettings());
-    sleep(sl);
     // detect devices
     if(Abort()) return false;
     Progress::NextStage();
