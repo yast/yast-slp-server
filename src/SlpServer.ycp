@@ -102,8 +102,8 @@ global map<string, any> slp_config = $[
 map <string, any> REGFILES = $[];
 global list<map <string, any> > reg_files = [];
 
+// read global configuration file /etc/slp.conf
 boolean ReadGlobalConfig(){
-
   SETTINGS = (map <string, any>)SCR::Read(.etc.slp.all);
   REGFILES = (map <string, any>)SCR::Read(.etc.slp.reg.all);
 
@@ -116,15 +116,13 @@ boolean ReadGlobalConfig(){
   });
  y2milestone("Values from /etc/slp.conf : %1", slp_config);
  reg_files = (list<map <string, any> >) REGFILES["value"]:[];
-y2internal("%1", reg_files);
+ y2milestone("values from /etc/slp.reg.d : %1", reg_files);
  return true;
 }
 
-
+// write global configuration file /etc/slp.conf
 boolean WriteGlobalConfig(){
-
   foreach(string k1, any v1, slp_config, {
-   y2internal("slp_config %1 %2", k1, v1);
     SETTINGS["value"] = maplist(map<string, any > v2, (list < map<string, any> >) SETTINGS["value"]:nil, {
 	if (k1 == v2["name"]:"")
 	 {
@@ -138,21 +136,19 @@ boolean WriteGlobalConfig(){
 	});
   });
 
-
   REGFILES["value"] = reg_files;
 
-y2internal("reg_files %1", reg_files);
-y2internal("##########################################");
-y2internal("REGFILES %1", REGFILES);
+  y2milestone("write reg_files %1", reg_files);
+  y2milestone("write REGFILES %1", REGFILES);
 
   SCR::Write(.etc.slp.all, SETTINGS);
-//y2internal("write - %1", SETTINGS);
   SCR::Write(.etc.slp.reg.all, REGFILES);
  return true;
 }
 
-
+// check for package openslp-server installed
 boolean installed_packages(){
+ y2milestone("check for installed package");
  boolean ret = false;
   if( !Package::InstallMsg( "openslp-server",
 	    _("<p>To configure the SLP server, the <b>%1</b> package must be installed.</p>") +
@@ -202,10 +198,10 @@ global boolean Read() {
 	""
     );
 
-    // read current settings
+    // check if user is root
     if(!Confirm::MustBeRoot()) return false;
     Progress::NextStage();
-    if(false) Report::Error(Message::CannotReadCurrentSettings());
+    if(false) return false;
     sleep(sl);
 
 	Progress::set(false);
@@ -215,8 +211,7 @@ global boolean Read() {
     // read database
 //    if(Abort()) return false;
     Progress::NextStage();
-    if(!ReadGlobalConfig()) Report::Error(_("Cannot read database1."));
-//    sleep(sl);
+    if(!ReadGlobalConfig()) Report::Error(Message::CannotReadCurrentSettings());
 
     // read another database
     if(Abort()) return false;
@@ -285,7 +280,7 @@ global boolean Write() {
     if(Abort()) return false;
     Progress::NextStage ();
     /* Error message */
-    if(false) Report::Error (Message::SuSEConfigFailed());
+    if(false) return false;
     sleep(sl);
 
     if(Abort()) return false;
@@ -349,12 +344,13 @@ global map AutoPackages() {
 }
 
 global boolean GetStartService() {
-
- return Service::Enabled("slpd"); 
+ boolean status = Service::Enabled("slpd"); 
+ y2milestone("Status of slpd service %1", status);
+ return status;
 }
 
 global void SetStartService(boolean status) {
- y2internal("Set service status %1", status);
+ y2milestone("Set service status %1", status);
  if (status == true) Service::Enable("slpd");
 	else Service::Disable("slpd");
 }
