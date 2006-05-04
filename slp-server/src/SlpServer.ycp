@@ -1,0 +1,360 @@
+/**
+ * File:	modules/SlpServer.ycp
+ * Package:	Configuration of slp-server
+ * Summary:	SlpServer settings, input and output functions
+ * Authors:	Zugec Michal <mzugec@suse.cz>
+ *
+ * $Id$
+ *
+ * Representation of the configuration of slp-server.
+ * Input and output routines.
+ */
+
+{
+
+module "SlpServer";
+textdomain "slp-server";
+
+import "Progress";
+import "Report";
+import "Summary";
+import "Message";
+import "SCR";
+import "Service";
+import "SuSEFirewall";
+import "Package";
+import "Popup";
+import "Confirm";
+
+include "slp-server/helps.ycp";
+
+/**
+ * Prototypes
+ */
+global boolean Modified();
+
+/**
+ * Data was modified?
+ */
+global boolean modified = false;
+
+/**
+ */
+global boolean proposal_valid = false;
+
+/**
+ * Write only, used during autoinstallation.
+ * Don't run services and SuSEconfig, it's all done at one place.
+ */
+global boolean write_only = false;
+
+/**
+ * Abort function
+ * return boolean return true if abort
+ */
+global boolean() AbortFunction = Modified;
+
+/**
+ * Abort function
+ * @return boolean return true if abort
+ */
+global define boolean Abort() ``{
+    if(AbortFunction != nil)
+    {
+	return AbortFunction () == true;
+    }
+    return false;
+}
+
+/**
+ * Data was modified?
+ * @return true if modified
+ */
+global boolean Modified() {
+    y2debug("modified=%1",modified);
+    return modified;
+}
+
+// Settings: Define all variables needed for configuration of slp-server
+// TODO FIXME: Define all the variables necessary to hold
+// TODO FIXME: the configuration here (with the appropriate
+// TODO FIXME: description)
+// TODO FIXME: For example:
+//   /**
+//    * List of the configured cards.
+//    */
+//   list cards = [];
+//
+//   /**
+//    * Some additional parameter needed for the configuration.
+//    */
+//   boolean additional_parameter = true;
+
+map <string, any> SETTINGS = $[];
+global map<string, any> slp_config = $[
+	"net.slp.usescopes":"DEFAULT",
+	"net.slp.isda":"false",
+	"net.slp.isbroadcastonly":"false",
+	"net.slp.daheartbeat":nil
+
+	];
+
+map <string, any> REGFILES = $[];
+global list<map <string, any> > reg_files = [];
+
+// read global configuration file /etc/slp.conf
+boolean ReadGlobalConfig(){
+  SETTINGS = (map <string, any>)SCR::Read(.etc.slp.all);
+  REGFILES = (map <string, any>)SCR::Read(.etc.slp.reg.all);
+
+  foreach(string k1, any v1, SETTINGS, {
+   if (k1 == "value") {
+    foreach(map<string, any > v2, (list < map<string, any> >)v1, {
+     if (v2["type"]:nil == 1) slp_config[v2["name"]:""]=v2["value"]:"";
+    });
+   }
+  });
+ y2milestone("Values from /etc/slp.conf : %1", slp_config);
+ reg_files = (list<map <string, any> >) REGFILES["value"]:[];
+ y2milestone("values from /etc/slp.reg.d : %1", reg_files);
+ return true;
+}
+
+// write global configuration file /etc/slp.conf
+boolean WriteGlobalConfig(){
+  foreach(string k1, any v1, slp_config, {
+    SETTINGS["value"] = maplist(map<string, any > v2, (list < map<string, any> >) SETTINGS["value"]:nil, {
+	if (k1 == v2["name"]:"")
+	 {
+	  if (v1 == nil) v2["type"]=0;
+		else {
+		 v2["type"]=1;
+		 v2["value"]=v1;
+		 }
+	 }
+	return v2;
+	});
+  });
+
+  REGFILES["value"] = reg_files;
+
+  y2milestone("write reg_files %1", reg_files);
+  y2milestone("write REGFILES %1", REGFILES);
+
+  SCR::Write(.etc.slp.all, SETTINGS);
+  SCR::Write(.etc.slp.reg.all, REGFILES);
+ return true;
+}
+
+// check for package openslp-server installed
+boolean installed_packages(){
+ y2milestone("check for installed package");
+ boolean ret = false;
+  if( !Package::InstallMsg( "openslp-server",
+	    _("<p>To configure the SLP server, the <b>%1</b> package must be installed.</p>") +
+	    _("<p>Do you want to install it now?</p>")) )
+	{
+	Popup::Error( Message::CannotContinueWithoutPackagesInstalled() );
+    } else ret = true;
+
+ return ret;
+}
+
+
+/**
+ * Read all slp-server settings
+ * @return true on success
+ */
+global boolean Read() {
+
+    /* SlpServer read dialog caption */
+    string caption = _("Initializing SLP Server Configuration");
+
+    // TODO FIXME Set the right number of stages
+    integer steps = 4;
+
+    integer sl = 500;
+    sleep(sl);
+
+    // TODO FIXME Names of real stages
+    // We do not set help text here, because it was set outside
+    Progress::New( caption, " ", steps, [
+	    /* Progress stage 1/3 */
+	    _("Read the database"),
+	    /* Progress stage 2/3 */
+	    _("Read the previous settings"),
+	    /* Progress stage 3/3 */
+	    _("Detect the devices")
+	], [
+	    /* Progress step 1/3 */
+	    _("Reading the database..."),
+	    /* Progress step 2/3 */
+	    _("Reading the previous settings..."),
+	    /* Progress step 3/3 */
+	    _("Detecting the devices..."),
+	    /* Progress finished */
+	    _("Finished")
+	],
+	""
+    );
+
+    // check if user is root
+    if(!Confirm::MustBeRoot()) return false;
+    Progress::NextStage();
+    if(false) return false;
+    sleep(sl);
+
+	Progress::set(false);
+	SuSEFirewall::Read();
+	Progress::set(true);
+
+    // read database
+//    if(Abort()) return false;
+    Progress::NextStage();
+    if(!ReadGlobalConfig()) Report::Error(Message::CannotReadCurrentSettings());
+
+    // read another database
+    if(Abort()) return false;
+    Progress::NextStep();
+    if(false) Report::Error(_("Cannot read database2."));
+    sleep(sl);
+
+    // detect devices
+    if(Abort()) return false;
+    Progress::NextStage();
+    if(!installed_packages()) return false;
+    sleep(sl);
+
+    if(Abort()) return false;
+    Progress::NextStage();
+    sleep(sl);
+
+    if(Abort()) return false;
+    modified = false;
+    return true;
+}
+
+/**
+ * Write all slp-server settings
+ * @return true on success
+ */
+global boolean Write() {
+
+    /* SlpServer read dialog caption */
+    string caption = _("Saving SLP Server Configuration");
+
+    // TODO FIXME And set the right number of stages
+    integer steps = 2;
+
+    integer sl = 500;
+    sleep(sl);
+
+    // TODO FIXME Names of real stages
+    // We do not set help text here, because it was set outside
+    Progress::New(caption, " ", steps, [
+	    /* Progress stage 1/2 */
+	    _("Write the settings"),
+	    /* Progress stage 2/2 */
+	    _("Run SuSEconfig")
+	], [
+	    /* Progress step 1/2 */
+	    _("Writing the settings..."),
+	    /* Progress step 2/2 */
+	    _("Running SuSEconfig..."),
+	    /* Progress finished */
+	    _("Finished")
+	],
+	""
+    );
+
+        Progress::set(false);
+        SuSEFirewall::Write();
+        Progress::set(true);
+
+    Progress::NextStage();
+    /* Error message */
+    if(!WriteGlobalConfig()) Report::Error (_("Cannot write settings."));
+    sleep(sl);
+
+    // run SuSEconfig
+    if(Abort()) return false;
+    Progress::NextStage ();
+    /* Error message */
+    if(false) return false;
+    sleep(sl);
+
+    if(Abort()) return false;
+    /* Progress finished */
+    Progress::NextStage();
+    sleep(sl);
+
+    if(Abort()) return false;
+    return true;
+}
+
+/**
+ * Get all slp-server settings from the first parameter
+ * (For use by autoinstallation.)
+ * @param settings The YCP structure to be imported.
+ * @return boolean True on success
+ */
+global boolean Import (map settings) {
+    // TODO FIXME: your code here (fill the above mentioned variables)...
+    return true;
+}
+
+/**
+ * Dump the slp-server settings to a single map
+ * (For use by autoinstallation.)
+ * @return map Dumped settings (later acceptable by Import ())
+ */
+global map Export () {
+    // TODO FIXME: your code here (return the above mentioned variables)...
+    return $[];
+}
+
+/**
+ * Create a textual summary and a list of unconfigured cards
+ * @return summary of the current configuration
+ */
+global list Summary() {
+    // TODO FIXME: your code here...
+    /* Configuration summary text for autoyast */
+    return [ _("Configuration summary..."), [] ];
+}
+
+/**
+ * Create an overview table with all configured cards
+ * @return table items
+ */
+global list Overview() {
+    // TODO FIXME: your code here...
+    return [];
+}
+
+/**
+ * Return packages needed to be installed and removed during
+ * Autoinstallation to insure module has all needed software
+ * installed.
+ * @return map with 2 lists.
+ */
+global map AutoPackages() {
+    // TODO FIXME: your code here...
+    return $[ "install":[], "remove":[] ];
+}
+
+global boolean GetStartService() {
+ boolean status = Service::Enabled("slpd"); 
+ y2milestone("Status of slpd service %1", status);
+ return status;
+}
+
+global void SetStartService(boolean status) {
+ y2milestone("Set service status %1", status);
+ if (status == true) Service::Enable("slpd");
+	else Service::Disable("slpd");
+}
+
+
+/* EOF */
+}
