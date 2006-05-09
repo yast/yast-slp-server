@@ -37,6 +37,8 @@ global boolean Modified();
  * Data was modified?
  */
 global boolean modified = false;
+global boolean configured = false;
+boolean serviceStatus = false;
 
 /**
  */
@@ -231,6 +233,7 @@ global boolean Read() {
 
     if(Abort()) return false;
     modified = false;
+    configured = true;
     return true;
 }
 
@@ -289,6 +292,7 @@ global boolean Write() {
     sleep(sl);
 
     if(Abort()) return false;
+    configured = true;
     return true;
 }
 
@@ -299,7 +303,24 @@ global boolean Write() {
  * @return boolean True on success
  */
 global boolean Import (map settings) {
-    // TODO FIXME: your code here (fill the above mentioned variables)...
+y2internal("import %1", settings);
+y2internal("slp_config %1", slp_config);
+ foreach(string key, any value, (map<string, any>)settings, {
+  switch(key){
+   case("service") :
+                serviceStatus = (boolean) value;
+                break;
+   case("config") :
+		foreach(string k, any v, (map<string, any>)value, {
+		slp_config[k]=v;
+		});
+                break;
+   case("files") :
+                reg_files = (list<map<string, any> >)value;
+                break;
+     }
+ });
+y2internal("slp_config after %1", slp_config);
     return true;
 }
 
@@ -309,8 +330,16 @@ global boolean Import (map settings) {
  * @return map Dumped settings (later acceptable by Import ())
  */
 global map Export () {
-    // TODO FIXME: your code here (return the above mentioned variables)...
-    return $[];
+   map result = $[
+        "version" : "1.0",
+	"service" : serviceStatus,
+	"config"  : slp_config,
+	"files"	  : reg_files
+	];
+
+    configured = true;
+y2internal("export %1", result);
+    return result;
 }
 
 /**
@@ -318,9 +347,13 @@ global map Export () {
  * @return summary of the current configuration
  */
 global list Summary() {
-    // TODO FIXME: your code here...
-    /* Configuration summary text for autoyast */
-    return [ _("Configuration summary..."), [] ];
+ string summary = _("Configuration summary...");
+  if (configured){
+   } else {
+        summary = Summary::NotConfigured();
+        }
+    return [ summary, [] ];
+
 }
 
 /**
@@ -344,15 +377,17 @@ global map AutoPackages() {
 }
 
 global boolean GetStartService() {
- boolean status = Service::Enabled("slpd"); 
- y2milestone("Status of slpd service %1", status);
- return status;
+ serviceStatus = Service::Enabled("slpd"); 
+ y2milestone("Status of slpd service %1", serviceStatus);
+ return serviceStatus;
 }
 
 global void SetStartService(boolean status) {
  y2milestone("Set service status %1", status);
  if (status == true) Service::Enable("slpd");
 	else Service::Disable("slpd");
+ serviceStatus = status;
+
 }
 
 

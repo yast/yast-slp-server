@@ -82,6 +82,14 @@ else if (func == "Write") {
     ret = SlpServer::Write();
     Progress::set (progress_orig);
 }
+else if (func == "GetModified"){
+ ret = SlpServer::modified;
+}
+else if (func == "SetModified"){
+ SlpServer::modified = true;
+ ret = true;
+}
+
 /* Unknown function */
 else {
     y2error("Unknown function: %1", func);
