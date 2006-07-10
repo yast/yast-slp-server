@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Mon Jul 10 13:17:23 CEST 2006 - mzugec@suse.cz
+
+- #190280 - changed SlpServer to SLP Server in desktop file
+
+-------------------------------------------------------------------
 Mon Apr 24 09:57:21 CEST 2006 - mzugec@suse.cz
 
 - testsuite 
