@@ -19,6 +19,6 @@ X-SuSE-YaST-AutoInstResource=slp-server
 Icon=yast-slp-server
 Exec=/sbin/yast2 slp-server 
 
-Name=SlpServer
+Name=SLP Server
 GenericName=slp-server
 X-KDE-SubstituteUID=true
