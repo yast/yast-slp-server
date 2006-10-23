@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Mon Oct 23 17:19:56 CEST 2006 - mzugec@suse.cz
+
+- #213878 - add description to desktop file
+- 2.14.0 
+
+-------------------------------------------------------------------
 Tue May  9 16:58:04 CEST 2006 - mzugec@suse.cz
 
 - fixed #173916 - add support for autoinstallation 
