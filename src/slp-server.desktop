@@ -20,5 +20,5 @@ Icon=yast-slp-server
 Exec=/sbin/yast2 slp-server 
 
 Name=SLP Server
-GenericName=slp-server
+GenericName=Configure a SLP server
 X-KDE-SubstituteUID=true

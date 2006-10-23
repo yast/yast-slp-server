@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Mon Oct 23 17:13:14 CEST 2006 - mzugec@suse.cz
+
+- #213878 - add description to desktop file
+
+-------------------------------------------------------------------
 Mon Jul 10 13:18:09 CEST 2006 - mzugec@suse.cz
 
 - #190280 - changed SlpServer to SLP Server in desktop file 
