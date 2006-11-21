@@ -105,8 +105,8 @@ answers.</p>
 
    "expert" : _("<p>With <b>Expert Settings</b>, access all options available in /etc/slp.conf.</p>"),
 
-   "reg_files" : _( "Configuration files for static registration to SLP. With <b>Add</b>, create a new empty file. With <b>Modify</b>,\n"
-"change the values of any existing file. With <b>Delete</b>, it is possible to delete files not owned by any package."),
+   "reg_files" : _( "Configuration files for static registration to SLP. With <b>Add</b>, create a new empty file. With <b>Modify</b>,
+change the values of any existing file. With <b>Delete</b>, it is possible to delete files not owned by any package."),
 
    "regedit_table"	: _("Help for regedit"),
 ];
