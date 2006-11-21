@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Tue Nov 21 10:37:10 CET 2006 - mzugec@suse.cz
+
+- #219445 - slp-server with broken msgid
+- 2.13.9 
+
+-------------------------------------------------------------------
 Mon Oct 23 17:13:14 CEST 2006 - mzugec@suse.cz
 
 - #213878 - add description to desktop file
