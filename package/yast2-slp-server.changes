@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Tue Jun 12 16:24:57 CEST 2007 - mzugec@suse.cz
+
+- fixed server configuration handling (#257568)
+- 2.14.2 
+
+-------------------------------------------------------------------
 Tue Nov 21 10:21:31 CET 2006 - mzugec@suse.cz
 
 - #219445 - slp-server with broken msgid
