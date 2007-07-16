@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Mon Jul 16 12:53:16 CEST 2007 - mzugec@suse.cz
+
+- don't disable Scopes for "Becomes DA Server" option (#291307)
+- don't use lowercase options in slp.conf (#291301)
+- 2.15.0 
+
+-------------------------------------------------------------------
 Tue Jun 12 16:24:57 CEST 2007 - mzugec@suse.cz
 
 - fixed server configuration handling (#257568)
