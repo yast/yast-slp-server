@@ -537,7 +537,7 @@ void changeResponseTo(symbol resp){
                 break;
    case(`da_server) : y2milestone("Becomes DA Server");
                 UI::ChangeWidget(`id(`ip), `Enabled, false);
-                UI::ChangeWidget(`id(`scope), `Enabled, false);
+//                UI::ChangeWidget(`id(`scope), `Enabled, false);
 		SlpServer::slp_config["net.slp.isda"]="true";
                 break;
    }
