@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Tue Nov 27 15:39:35 CET 2007 - mzugec@suse.cz
+
+- added full list of configuration options (#291301) 
+
+-------------------------------------------------------------------
 Mon Jul 16 14:08:59 CEST 2007 - mzugec@suse.cz
 
 - don't disable Scopes for "Becomes DA Server" option (#291307)
