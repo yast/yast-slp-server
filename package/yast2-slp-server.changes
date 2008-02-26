@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Tue Feb 26 16:01:52 CET 2008 - mzugec@suse.de
+
+- check if network is running
+- 2.16.0 
+
+-------------------------------------------------------------------
 Mon Jul 16 12:53:16 CEST 2007 - mzugec@suse.cz
 
 - don't disable Scopes for "Becomes DA Server" option (#291307)
