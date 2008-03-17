@@ -22,3 +22,4 @@ Exec=/sbin/yast2 slp-server
 Name=SLP Server
 GenericName=Configure a SLP server
 X-KDE-SubstituteUID=true
+StartupNotify=true
