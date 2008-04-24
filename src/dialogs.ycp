@@ -21,6 +21,8 @@ import "CWMFirewallInterfaces";
 import "TablePopup";
 import "LogView";
 import "IP";
+import "String";
+
 include "slp-server/helps.ycp";
 
 void initServerSettings(string key);
@@ -554,7 +556,7 @@ define void initServerSettings(string key) ``{
   else
    if (SlpServer::slp_config["net.slp.isbroadcastonly"]:"false" == "true") mode = `bc;
     else
-	if (size(SlpServer::slp_config["net.slp.daaddresses"]:"")>0) mode = `da;
+	if (size(String::CutBlanks(SlpServer::slp_config["net.slp.daaddresses"]:""))>0) mode = `da;
 		else mode = `mc;
  UI::ChangeWidget(`id(`resp), `CurrentButton, mode);
  changeResponseTo(mode);
