@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Mon Jul 21 13:10:08 CEST 2008 - mzugec@suse.cz
+
+- use correct cases for configuration options (bnc#291301)
+- 2.17.0 
+
+-------------------------------------------------------------------
 Fri May 16 16:40:22 CEST 2008 - jsrain@suse.cz
 
 - added categories Settings and System into desktop file

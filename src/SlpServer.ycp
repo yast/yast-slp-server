@@ -126,18 +126,47 @@ boolean ReadGlobalConfig(){
 
 // write global configuration file /etc/slp.conf
 boolean WriteGlobalConfig(){
+  list<string> correct_case2 = [
+"net.slp.useScopes",
+"net.slp.DAAddresses",
+"net.slp.isDA",
+"net.slp.DAHeartBeat",
+"net.slp.watchRegistrationPID",
+"net.slp.maxResults",
+"net.slp.isBroadcastOnly",
+"net.slp.passiveDADetection",
+"net.slp.activeDADetection",
+"net.slp.DAActiveDiscoveryInterval",
+"net.slp.multicastTTL",
+"net.slp.DADiscoveryMaximumWait",
+"net.slp.DADiscoveryTimeouts",
+"net.slp.multicastMaximumWait",
+"net.slp.multicastTimeouts",
+"net.slp.unicastMaximumWait",
+"net.slp.unicastTimeouts",
+"net.slp.datagramTimeouts",
+"net.slp.randomWaitBound",
+"net.slp.MTU",
+"net.slp.interfaces",
+"net.slp.securityEnabled",
+"net.slp.checkSourceAddr",
+"net.slp.traceDATraffic",
+"net.slp.traceReg",
+"net.slp.traceDrop",
+"net.slp.traceMsg"
+];
   foreach(string k1, any v1, slp_config, {
-  map<string, string> correct_case = $[
-	"net.slp.usescopes":"net.slp.useScopes",
-	"net.slp.daaddresses":"net.slp.DAAddresses",
-	"net.slp.isbroadcastonly":"net.slp.isBroadcastOnly"
-					];
     SETTINGS["value"] = maplist(map<string, any > v2, (list < map<string, any> >) SETTINGS["value"]:nil, {
 	if (k1 == v2["name"]:"")
 	 {
 	  if (v1 == nil) v2["type"]=0;
 		else {
-		if (contains(Map::Keys(correct_case), k1)) v2["name"] = correct_case[k1]:"";
+		foreach(string s, correct_case2, {
+		 if (tolower(s)==k1){
+		   v2["name"] = s;
+		   break;
+		  }
+		});
 		 v2["type"]=1;
 		 v2["value"]=v1;
 		 }
@@ -211,7 +240,6 @@ global boolean Read() {
     // check if user is root
     if(!Confirm::MustBeRoot()) return false;
     if(!NetworkService::RunningNetworkPopup()) return false;
-
     Progress::NextStage();
     if(false) return false;
     sleep(sl);
