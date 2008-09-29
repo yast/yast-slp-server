@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Mon Sep 29 09:17:22 CEST 2008 - mzugec@suse.de
+
+- fixed menu category for gnome (bnc#429429)
+- 2.17.1 
+
+-------------------------------------------------------------------
 Mon Jul 21 13:10:08 CEST 2008 - mzugec@suse.cz
 
 - use correct cases for configuration options (bnc#291301)
