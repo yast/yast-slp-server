@@ -21,6 +21,7 @@ import "CWMFirewallInterfaces";
 import "TablePopup";
 import "LogView";
 import "IP";
+import "String";
 include "slp-server/helps.ycp";
 
 void initServerSettings(string key);
@@ -548,7 +549,7 @@ void changeResponseTo(symbol resp){
 define void initServerSettings(string key) ``{
  symbol mode = nil;
  keys = [];
- UI::ChangeWidget(`id(`ip), `Value, SlpServer::slp_config["net.slp.daaddresses"]:"");
+ UI::ChangeWidget(`id(`ip), `Value, String::CutBlanks( SlpServer::slp_config["net.slp.daaddresses"]:"") );
  UI::ChangeWidget(`id(`scope), `Value, SlpServer::slp_config["net.slp.usescopes"]:"");
  if (SlpServer::slp_config["net.slp.isda"]:"false" == "true") mode = `da_server;
   else
@@ -577,11 +578,15 @@ define boolean validateServerSettings (string key, map event)
 {
  if (UI::QueryWidget(`id(`resp), `CurrentButton) == `da)
   {
-   if ( !IP::Check((string)UI::QueryWidget(`id(`ip), `Value)) || UI::QueryWidget(`id(`scope), `Value)=="" )
-    {
+   boolean ip_valid = true;
+   if ((string)UI::QueryWidget(`id(`ip), `Value) == "") ip_valid = false;
+   foreach(string ip, splitstring((string)UI::QueryWidget(`id(`ip), `Value), ","), {
+    if(!IP::Check(String::CutBlanks(ip))) ip_valid = false;
+   });
+   if (!ip_valid){
      Popup::Error (_("Scope and IP address must be inserted."));
      return false;
-    }
+   }
   }
  if (UI::QueryWidget(`id(`resp), `CurrentButton) == `mc)
   {

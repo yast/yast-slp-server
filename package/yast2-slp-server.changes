@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Mon Dec 15 16:28:52 CET 2008 - mzugec@suse.cz
+
+- allow more than one DA IP address(bnc#430336)
+- 2.17.2 
+
+-------------------------------------------------------------------
 Mon Sep 29 09:17:22 CEST 2008 - mzugec@suse.de
 
 - fixed menu category for gnome (bnc#429429)
