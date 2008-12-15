@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Mon Dec 15 17:26:44 CET 2008 - mzugec@suse.de
+
+- allow more than one DA IP addresses (bnc#430336)
+- 2.13.13 
+
+-------------------------------------------------------------------
 Tue Nov 27 15:39:35 CET 2007 - mzugec@suse.cz
 
 - added full list of configuration options (#291301) 
