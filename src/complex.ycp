@@ -77,6 +77,9 @@ any SummaryDialog() {
 
     Wizard::SetContentsButtons(caption, contents, HELPS["summary"]:"",
 	    Label::BackButton(), Label::FinishButton());
+    Wizard::SetNextButton(`next, Label::OKButton());
+    Wizard::SetAbortButton(`abort, Label::CancelButton());
+    Wizard::HideBackButton();
 
     any ret = nil;
     while(true) {
