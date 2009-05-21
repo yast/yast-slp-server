@@ -1,0 +1,117 @@
+-------------------------------------------------------------------
+Thu May 21 10:52:10 CEST 2009 - mzugec@suse.cz
+
+- accept both IP and hostname in configuration (bnc#501941)
+- 2.17.3 
+
+-------------------------------------------------------------------
+Mon Dec 15 16:28:52 CET 2008 - mzugec@suse.cz
+
+- allow more than one DA IP address(bnc#430336)
+- 2.17.2 
+
+-------------------------------------------------------------------
+Mon Sep 29 09:17:22 CEST 2008 - mzugec@suse.de
+
+- fixed menu category for gnome (bnc#429429)
+- 2.17.1 
+
+-------------------------------------------------------------------
+Mon Jul 21 13:10:08 CEST 2008 - mzugec@suse.cz
+
+- use correct cases for configuration options (bnc#291301)
+- 2.17.0 
+
+-------------------------------------------------------------------
+Fri May 16 16:40:22 CEST 2008 - jsrain@suse.cz
+
+- added categories Settings and System into desktop file
+  (bnc #382778)
+
+-------------------------------------------------------------------
+Thu Apr 24 21:53:30 CEST 2008 - mzugec@suse.cz
+
+- fixed SCR agent for slp.reg.d/* files (bnc#374310)
+- 2.16.2 
+
+-------------------------------------------------------------------
+Mon Mar 17 12:43:32 CET 2008 - jsrain@suse.cz
+
+- added 'StartupNotify=true' to the desktop file (bnc #304964)
+- 2.16.1
+
+-------------------------------------------------------------------
+Tue Feb 26 16:01:52 CET 2008 - mzugec@suse.de
+
+- check if network is running
+- 2.16.0 
+
+-------------------------------------------------------------------
+Mon Jul 16 12:53:16 CEST 2007 - mzugec@suse.cz
+
+- don't disable Scopes for "Becomes DA Server" option (#291307)
+- don't use lowercase options in slp.conf (#291301)
+- 2.15.0 
+
+-------------------------------------------------------------------
+Tue Jun 12 16:24:57 CEST 2007 - mzugec@suse.cz
+
+- fixed server configuration handling (#257568)
+- 2.14.2 
+
+-------------------------------------------------------------------
+Tue Nov 21 10:21:31 CET 2006 - mzugec@suse.cz
+
+- #219445 - slp-server with broken msgid
+- 2.14.1 
+
+-------------------------------------------------------------------
+Mon Oct 23 17:19:56 CEST 2006 - mzugec@suse.cz
+
+- #213878 - add description to desktop file
+- 2.14.0 
+
+-------------------------------------------------------------------
+Tue May  9 16:58:04 CEST 2006 - mzugec@suse.cz
+
+- fixed #173916 - add support for autoinstallation 
+
+-------------------------------------------------------------------
+Thu May  4 13:53:58 CEST 2006 - mzugec@suse.cz
+
+- proofread
+
+-------------------------------------------------------------------
+Mon Apr 24 09:57:21 CEST 2006 - mzugec@suse.cz
+
+- testsuite 
+
+-------------------------------------------------------------------
+Thu Mar 23 16:15:10 CET 2006 - mzugec@suse.cz
+
+- fixed #160315 - check if user is root 
+
+-------------------------------------------------------------------
+Tue Mar 21 09:50:48 CET 2006 - mzugec@suse.cz
+
+- fixed #159653 - move package to net services group 
+
+-------------------------------------------------------------------
+Fri Jan 20 17:24:55 CET 2006 - mzugec@suse.cz
+
+- install packages
+
+-------------------------------------------------------------------
+Tue Jan  3 18:59:04 CET 2006 - mzugec@suse.cz
+
+- functional version 
+
+-------------------------------------------------------------------
+Thu Dec 22 13:41:21 CET 2005 - mzugec@suse.cz
+
+- prepared to build 
+
+-------------------------------------------------------------------
+Fri Dec 16 18:03:19 2005 - mzugec@suse.cz
+
+- initial version
