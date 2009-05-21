@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Thu May 21 10:07:37 CEST 2009 - mzugec@suse.cz
+
+- accept both IP and hostname in configuration (bnc#501941)
+- 2.18.1 
+
+-------------------------------------------------------------------
 Mon Jan 26 14:21:37 CET 2009 - mzugec@suse.cz
 
 - button labeling (bnc#440537)
