@@ -10,7 +10,7 @@ Requires:       yast2 >= 2.18.2
 
 BuildArchitectures:	noarch
 
-Summary:	Configuration of slp-server
+Summary:	YaST2 SLP Daemon Server Configuration
 
 %description
 -
