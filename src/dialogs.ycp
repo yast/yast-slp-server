@@ -22,6 +22,7 @@ import "TablePopup";
 import "LogView";
 import "IP";
 import "String";
+import "Address";
 include "slp-server/helps.ycp";
 
 void initServerSettings(string key);
@@ -581,7 +582,7 @@ define boolean validateServerSettings (string key, map event)
    boolean ip_valid = true;
    if ((string)UI::QueryWidget(`id(`ip), `Value) == "") ip_valid = false;
    foreach(string ip, splitstring((string)UI::QueryWidget(`id(`ip), `Value), ","), {
-    if(!IP::Check(String::CutBlanks(ip))) ip_valid = false;
+    if(!Address::Check4(String::CutBlanks(ip)) && !Address::Check6(String::CutBlanks(ip))) ip_valid = false;
    });
    if (!ip_valid){
      Popup::Error (_("Scope and IP address must be inserted."));

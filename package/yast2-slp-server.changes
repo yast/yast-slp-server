@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Thu May 21 10:52:10 CEST 2009 - mzugec@suse.cz
+
+- accept both IP and hostname in configuration (bnc#501941)
+- 2.17.3 
+
+-------------------------------------------------------------------
 Mon Dec 15 16:28:52 CET 2008 - mzugec@suse.cz
 
 - allow more than one DA IP address(bnc#430336)
