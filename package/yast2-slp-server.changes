@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Mon Feb 22 15:58:42 CET 2010 - juhliarik@suse.cz
+
+- added fix for missing localization (bnc#580475)
+- 2.17.4 
+
+-------------------------------------------------------------------
 Thu May 21 10:52:10 CEST 2009 - mzugec@suse.cz
 
 - accept both IP and hostname in configuration (bnc#501941)

@@ -447,7 +447,7 @@ define symbol handleRegTable(string key, map event ) ``{
 	  initReg("");
 	}
    } else {
-	   Popup::Error(sformat("Reg file %1 is owned by package %2", currentRegFile, package));
+	   Popup::Error(sformat(_("Reg file %1 is owned by package %2"), currentRegFile, package));
 	}
  }
  if (event["ID"]:nil == `_tp_add)
@@ -470,7 +470,7 @@ define symbol handleRegTable(string key, map event ) ``{
             if( ret == `ok ) {
                 string filename = sformat("/etc/slp.reg.d/%1", (string) UI::QueryWidget( `id(`filename), `Value ) );
 		if (contains(keys, filename)){
-		  Popup::Error("File with that name already exists");
+		  Popup::Error(_("File with that name already exists"));
 		 } else {
 	SlpServer::reg_files = add(SlpServer::reg_files, $[
 	        "name" : filename,
