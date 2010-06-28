@@ -96,10 +96,10 @@ global boolean Modified() {
 
 map <string, any> SETTINGS = $[];
 global map<string, any> slp_config = $[
-	"net.slp.usescopes":"DEFAULT",
-	"net.slp.isda":"false",
-	"net.slp.isbroadcastonly":"false",
-	"net.slp.daheartbeat":nil
+	"net.slp.useScopes":"DEFAULT",
+	"net.slp.isDA":"false",
+	"net.slp.isBroadcastOnly":"false",
+	"net.slp.DAHeartBeat":nil
 
 	];
 
@@ -114,7 +114,7 @@ boolean ReadGlobalConfig(){
   foreach(string k1, any v1, SETTINGS, {
    if (k1 == "value") {
     foreach(map<string, any > v2, (list < map<string, any> >)v1, {
-     if (v2["type"]:nil == 1) slp_config[tolower(v2["name"]:"") ]=v2["value"]:"";
+     if (v2["type"]:nil == 1) slp_config[v2["name"]:""]=v2["value"]:"";
     });
    }
   });
@@ -126,6 +126,7 @@ boolean ReadGlobalConfig(){
 
 // write global configuration file /etc/slp.conf
 boolean WriteGlobalConfig(){
+/*
   list<string> correct_case2 = [
 "net.slp.useScopes",
 "net.slp.DAAddresses",
@@ -155,25 +156,19 @@ boolean WriteGlobalConfig(){
 "net.slp.traceDrop",
 "net.slp.traceMsg"
 ];
+*/
   foreach(string k1, any v1, slp_config, {
     SETTINGS["value"] = maplist(map<string, any > v2, (list < map<string, any> >) SETTINGS["value"]:nil, {
 	if (k1 == v2["name"]:"")
 	 {
-	  if (v1 == nil) v2["type"]=0;
-		else {
-		foreach(string s, correct_case2, {
-		 if (tolower(s)==k1){
-		   v2["name"] = s;
-		   break;
-		  }
-		});
-		 v2["type"]=1;
-		 v2["value"]=v1;
-		 }
+	  v2["type"]= (v1 == nil) ? 0 : 1;
+	  v2["value"]=v1;
 	 }
 	return v2;
 	});
   });
+
+y2internal("slp_config %1", slp_config);
 
   REGFILES["value"] = reg_files;
 
