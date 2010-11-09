@@ -126,54 +126,36 @@ boolean ReadGlobalConfig(){
 
 // write global configuration file /etc/slp.conf
 boolean WriteGlobalConfig(){
-/*
-  list<string> correct_case2 = [
-"net.slp.useScopes",
-"net.slp.DAAddresses",
-"net.slp.isDA",
-"net.slp.DAHeartBeat",
-"net.slp.watchRegistrationPID",
-"net.slp.maxResults",
-"net.slp.isBroadcastOnly",
-"net.slp.passiveDADetection",
-"net.slp.activeDADetection",
-"net.slp.DAActiveDiscoveryInterval",
-"net.slp.multicastTTL",
-"net.slp.DADiscoveryMaximumWait",
-"net.slp.DADiscoveryTimeouts",
-"net.slp.multicastMaximumWait",
-"net.slp.multicastTimeouts",
-"net.slp.unicastMaximumWait",
-"net.slp.unicastTimeouts",
-"net.slp.datagramTimeouts",
-"net.slp.randomWaitBound",
-"net.slp.MTU",
-"net.slp.interfaces",
-"net.slp.securityEnabled",
-"net.slp.checkSourceAddr",
-"net.slp.traceDATraffic",
-"net.slp.traceReg",
-"net.slp.traceDrop",
-"net.slp.traceMsg"
-];
-*/
+
   foreach(string k1, any v1, slp_config, {
-    SETTINGS["value"] = maplist(map<string, any > v2, (list < map<string, any> >) SETTINGS["value"]:nil, {
+    boolean found=false;
+    SETTINGS["value"] = maplist(map<string, any > v2, (list < map<string, any> >) SETTINGS["value"]:[], {
 	if (k1 == v2["name"]:"")
 	 {
 	  v2["type"]= (v1 == nil) ? 0 : 1;
 	  v2["value"]=v1;
+	  found=true;
 	 }
 	return v2;
 	});
+    if (!found) SETTINGS["value"]=add(SETTINGS["value"]:[],
+	$[
+	  "name" : k1,
+	  "type" : (v1 == nil) ? 0 : 1,
+	  "kind" : "value",
+	  "comment":"",
+	  "value": v1
+	]
+    );
   });
 
-y2internal("slp_config %1", slp_config);
+  y2milestone("slp_config %1", slp_config);
+  y2milestone("SETTINGS %1", SETTINGS);
 
   REGFILES["value"] = reg_files;
 
-  y2milestone("write reg_files %1", reg_files);
-  y2milestone("write REGFILES %1", REGFILES);
+  y2debug("write reg_files %1", reg_files);
+  y2debug("write REGFILES %1", REGFILES);
 
   SCR::Write(.etc.slp.all, SETTINGS);
   SCR::Write(.etc.slp.reg.all, REGFILES);
