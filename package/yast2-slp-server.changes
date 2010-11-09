@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Tue Nov  9 16:23:16 CET 2010 - mzugec@suse.cz
+
+- improved fix for bnc#291301 (write also values that wasn't readed)
+- 2.20.0 
+
+-------------------------------------------------------------------
 Mon Jun 28 16:14:37 CEST 2010 - mzugec@suse.cz
 
 - parse config file case sensitive
