@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Wed Nov 10 10:29:43 CET 2010 - mzugec@suse.de
+
+- store case-sensitive configuration options (bnc#291301)
+- 2.13.15 
+
+-------------------------------------------------------------------
 Thu May 21 10:17:16 CEST 2009 - mzugec@suse.cz
 
 - accept both IP and hostname in configuration (bnc#501941)
