@@ -456,7 +456,7 @@ define symbol handleRegTable(string key, map event ) ``{
             `VBox(
                 // translators: combo box for selsect module from installed unknown modules
                 `TextEntry(`id(`filename), _("Name of New File") ),
-                `HBox(
+                `ButtonBox(
                     `PushButton(`id(`ok), `opt(`default), Label::OKButton() ),
                     `PushButton(`id(`cancel), Label::CancelButton() )
                     )
