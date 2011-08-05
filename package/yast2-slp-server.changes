@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Fri Aug  5 12:35:10 CEST 2011 - tgoettlicher@suse.de
+
+- fixed .desktop file (bnc #681249)
+
+-------------------------------------------------------------------
 Fri Jul  1 12:58:01 CEST 2011 - mvidner@suse.cz
 
 - Proofread texts for translation (by A.Turrini, bnc#703238).
