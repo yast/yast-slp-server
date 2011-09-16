@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Fri Sep 16 11:43:56 CEST 2011 - visnov@suse.de
+
+- remove unneded dialogs and deprecated import
+
+-------------------------------------------------------------------
 Fri Aug  5 12:35:10 CEST 2011 - tgoettlicher@suse.de
 
 - fixed .desktop file (bnc #681249)

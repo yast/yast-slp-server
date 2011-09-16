@@ -38,24 +38,6 @@ An additional dialog informs whether it is safe to do so.
 </p>
 "),
 
-    /* Summary dialog help 1/3 */
-    "summary" : _("<p><b><big>SLP Server Configuration</big></b><br>
-Configure SLP server here.<br></p>
-") +
-
-    /* Summary dialog help 2/3 */
-    _("<p><b><big>Adding an SLP Server</big></b><br>
-Choose an SLP server from the list of detected SLP servers.
-If your SLP server was not detected, use <b>Other (not detected)</b>.
-Then press <b>Configure</b>.</p>
-") +
-
-    /* Summary dialog help 3/3 */
-    _("<p><b><big>Editing or Deleting:</big></b><br>
-If you press <b>Edit</b>, an additional dialog in which to change
-the configuration opens.</p>
-"),
-
     /* Ovreview dialog help 1/3 */
     "overview" : _("<p><b><big>SLP Server Configuration Overview</big></b><br>
 Obtain an overview of installed SLP servers. Additionally
