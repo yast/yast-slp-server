@@ -84,6 +84,7 @@ any SlpServerSequence() {
     ];
 
     Wizard::OpenCancelOKDialog();
+    Wizard::SetDesktopTitleAndIcon("slp-server");
 
     any ret = Sequencer::Run(aliases, sequence);
 
@@ -104,6 +105,7 @@ any SlpServerAutoSequence() {
     term contents = `Label(_("Initializing..."));
 
     Wizard::CreateDialog();
+    Wizard::SetDesktopTitleAndIcon("slp-server");
     Wizard::SetContentsButtons(caption, contents, "",
 	    Label::BackButton(), Label::NextButton());
 
