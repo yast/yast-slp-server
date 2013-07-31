@@ -1,31 +1,27 @@
-# Makefile.am for slp-server/src
+# Sources for slp-server
+
+module_DATA = \
+  modules/SlpServer.rb
+
+client_DATA = \
+  clients/slp-server_auto.rb \
+  clients/slp-server_proposal.rb \
+  clients/slp-server.rb
 
 yncludedir = @yncludedir@/slp-server
+ynclude_DATA = \
+  include/slp-server/wizards.rb \
+  include/slp-server/dialogs.rb \
+  include/slp-server/complex.rb \
+  include/slp-server/helps.rb
 
-client_DATA =			\
-	slp-server.ycp		\
-	slp-server_auto.ycp	\
-	slp-server_proposal.ycp
+scrconf_DATA = \
+  scrconf/slp_conf.scr \
+  scrconf/slp_reg.scr
 
-ynclude_DATA =			\
-	helps.ycp		\
-	wizards.ycp		\
-	dialogs.ycp		\
-	complex.ycp
+desktop_DATA = \
+  desktop/slp-server.desktop
 
-desktop_DATA =			\
-	slp-server.desktop
-
-module_DATA =			\
-	SlpServer.ycp		
-
-EXTRA_DIST = $(client_DATA) $(ynclude_DATA) $(module_DATA) $(desktop_DATA)
+EXTRA_DIST = $(module_DATA) $(client_DATA) $(ynclude_DATA) $(scrconf_DATA) $(desktop_DATA)
 
 include $(top_srcdir)/Makefile.am.common
-
-slp-server:
-	ln -sf . slp-server
-
-ycpchook = slp-server
-
-
