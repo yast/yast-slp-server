@@ -85,7 +85,8 @@ map<string, map <string, any> > widgets = $[
 
 	// firewall widget
     "firewall" : CWMFirewallInterfaces::CreateOpenFirewallWidget ($[
-        "services" : [ "slp-daemon" ],
+        # bnc#825505 - not working checkbox due to unknown firewall service
+        "services" : [ "service:openslp" ],
         "display_details" : true,
     ]),
 
