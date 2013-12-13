@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Thu Dec 12 13:47:48 UTC 2013 - vmoravec@suse.com
+
+- Fix incorrect firewall service bnc#825505
+- 3.0.1
+
+-------------------------------------------------------------------
 Wed Jul 31 08:39:24 UTC 2013 - yast-devel@opensuse.org
 
 - converted from YCP to Ruby by YCP Killer

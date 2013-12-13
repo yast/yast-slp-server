@@ -64,7 +64,8 @@ module Yast
         ),
         # firewall widget
         "firewall"        => CWMFirewallInterfaces.CreateOpenFirewallWidget(
-          { "services" => ["slp-daemon"], "display_details" => true }
+          # bnc#825505 - fixed not working checkbox due to unknown firewall service
+          { "services" => ["service:openslp"], "display_details" => true }
         ),
         # button for view log files
         "view_log"        => {
