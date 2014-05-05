@@ -241,33 +241,33 @@ boolean rowDelete (any opt_id, string opt_key)``{
 
 define map getServerOptions() ``{
  return $[
-	"net.slp.usescopes":$[],
-	"net.slp.daaddresses":$[],
-	"net.slp.isda":$["popup":$["items":[["true"], ["false"]], "widget":`combobox]],
-	"net.slp.daheartbeat":$[],
-	"net.slp.watchregistrationpid":$["popup":$["items":[["true"], ["false"]], "widget":`combobox]],
-	"net.slp.maxresults":$[],
-	"net.slp.isbroadcastonly":$["popup":$["items":[["true"], ["false"]], "widget":`combobox]],
-	"net.slp.passivedadetection":$["popup":$["items":[["true"], ["false"]], "widget":`combobox]],
-	"net.slp.activedadetection":$["popup":$["items":[["true"], ["false"]], "widget":`combobox]],
-	"net.slp.daactivediscoveryinterval":$[],
-	"net.slp.multicastttl":$[],
-	"net.slp.dadiscoverymaximumwait":$[],
-	"net.slp.dadiscoverytimeouts":$[],
-	"net.slp.multicastmaximumwait":$[],
-	"net.slp.multicasttimeouts":$[],
-	"net.slp.unicastmaximumwait":$[],
-	"net.slp.unicasttimeouts":$[],
-	"net.slp.datagramtimeouts":$[],
-	"net.slp.randomWaitbound":$[],
-	"net.slp.mtu":$[],
+	"net.slp.useScopes":$[],
+	"net.slp.DAAddresses":$[],
+	"net.slp.isDA":$["popup":$["items":[["true"], ["false"]], "widget":`combobox]],
+	"net.slp.DAHeartBeat":$[],
+	"net.slp.watchRegistrationPID":$["popup":$["items":[["true"], ["false"]], "widget":`combobox]],
+	"net.slp.maxResults":$[],
+	"net.slp.isBroadcastOnly":$["popup":$["items":[["true"], ["false"]], "widget":`combobox]],
+	"net.slp.passiveDADetection":$["popup":$["items":[["true"], ["false"]], "widget":`combobox]],
+	"net.slp.activeDADetection":$["popup":$["items":[["true"], ["false"]], "widget":`combobox]],
+	"net.slp.DAActiveDiscoveryInterval":$[],
+	"net.slp.multicastTTL":$[],
+	"net.slp.DADiscoveryMaximumWait":$[],
+	"net.slp.DADiscoveryTimeouts":$[],
+	"net.slp.multicastMaximumWait":$[],
+	"net.slp.multicastTimeouts":$[],
+	"net.slp.unicastMaximumWait":$[],
+	"net.slp.unicastTimeouts":$[],
+	"net.slp.datagramTimeouts":$[],
+	"net.slp.randomWaitBound":$[],
+	"net.slp.MTU":$[],
 	"net.slp.interfaces":$[],
-	"net.slp.securityenabled":$["popup":$["items":[["true"], ["false"]], "widget":`combobox]],
-	"net.slp.checksourceaddr":$["popup":$["items":[["true"], ["false"]], "widget":`combobox]],
-	"net.slp.tracedatraffic":$["popup":$["items":[["true"], ["false"]], "widget":`combobox]],
-	"net.slp.tracereg":$["popup":$["items":[["true"], ["false"]], "widget":`combobox]],
-	"net.slp.tracedrop":$["popup":$["items":[["true"], ["false"]], "widget":`combobox]],
-	"net.slp.tracemsg":$["popup":$["items":[["true"], ["false"]], "widget":`combobox]]
+	"net.slp.securityEnabled":$["popup":$["items":[["true"], ["false"]], "widget":`combobox]],
+	"net.slp.checkSourceAddr":$["popup":$["items":[["true"], ["false"]], "widget":`combobox]],
+	"net.slp.traceDATraffic":$["popup":$["items":[["true"], ["false"]], "widget":`combobox]],
+	"net.slp.traceReg":$["popup":$["items":[["true"], ["false"]], "widget":`combobox]],
+	"net.slp.traceDrop":$["popup":$["items":[["true"], ["false"]], "widget":`combobox]],
+	"net.slp.traceMsg":$["popup":$["items":[["true"], ["false"]], "widget":`combobox]]
 	];
 }
 
@@ -524,24 +524,24 @@ void changeResponseTo(symbol resp){
    case(`bc) : y2milestone("Use broadcast");
                 UI::ChangeWidget(`id(`ip), `Enabled, false);
                 UI::ChangeWidget(`id(`scope), `Enabled, false);
-		SlpServer::slp_config["net.slp.isda"]="false";
-		SlpServer::slp_config["net.slp.isbroadcastonly"]="true";
+		SlpServer::slp_config["net.slp.isDA"]="false";
+		SlpServer::slp_config["net.slp.isBroadcastOnly"]="true";
                 break;
    case(`mc) : y2milestone("Use multicast");
                 UI::ChangeWidget(`id(`ip), `Enabled, false);
                 UI::ChangeWidget(`id(`scope), `Enabled, true);
-		SlpServer::slp_config["net.slp.isda"]="false";
-		SlpServer::slp_config["net.slp.isbroadcastonly"]="false";
+		SlpServer::slp_config["net.slp.isDA"]="false";
+		SlpServer::slp_config["net.slp.isBroadcastOnly"]="false";
                 break;
    case(`da) : y2milestone("Use DA Server");
                 UI::ChangeWidget(`id(`ip), `Enabled, true);
                 UI::ChangeWidget(`id(`scope), `Enabled, true);
-		SlpServer::slp_config["net.slp.isda"]="false";
+		SlpServer::slp_config["net.slp.isDA"]="false";
                 break;
    case(`da_server) : y2milestone("Becomes DA Server");
                 UI::ChangeWidget(`id(`ip), `Enabled, false);
 //                UI::ChangeWidget(`id(`scope), `Enabled, false);
-		SlpServer::slp_config["net.slp.isda"]="true";
+		SlpServer::slp_config["net.slp.isDA"]="true";
                 break;
    }
 
@@ -551,13 +551,13 @@ void changeResponseTo(symbol resp){
 define void initServerSettings(string key) ``{
  symbol mode = nil;
  keys = [];
- UI::ChangeWidget(`id(`ip), `Value, String::CutBlanks( SlpServer::slp_config["net.slp.daaddresses"]:"") );
- UI::ChangeWidget(`id(`scope), `Value, SlpServer::slp_config["net.slp.usescopes"]:"");
- if (SlpServer::slp_config["net.slp.isda"]:"false" == "true") mode = `da_server;
+ UI::ChangeWidget(`id(`ip), `Value, String::CutBlanks( SlpServer::slp_config["net.slp.DAAddresses"]:"") );
+ UI::ChangeWidget(`id(`scope), `Value, SlpServer::slp_config["net.slp.useScopes"]:"");
+ if (SlpServer::slp_config["net.slp.isDA"]:"false" == "true") mode = `da_server;
   else
-   if (SlpServer::slp_config["net.slp.isbroadcastonly"]:"false" == "true") mode = `bc;
+   if (SlpServer::slp_config["net.slp.isBroadcastOnly"]:"false" == "true") mode = `bc;
     else
-	if (size(deletechars(SlpServer::slp_config["net.slp.daaddresses"]:"", " "))>0) mode = `da;
+	if (size(deletechars(SlpServer::slp_config["net.slp.DAAddresses"]:"", " "))>0) mode = `da;
 		else mode = `mc;
  UI::ChangeWidget(`id(`resp), `CurrentButton, mode);
  changeResponseTo(mode);
@@ -572,8 +572,8 @@ define symbol handleServerSettings(string key, map event ) ``{
 }
 
 void storeServerSettings(string option_id, map option_map) ``{
- SlpServer::slp_config["net.slp.usescopes"]=UI::QueryWidget(`id(`scope), `Value);
- SlpServer::slp_config["net.slp.daaddresses"]=UI::QueryWidget(`id(`ip), `Value);
+ SlpServer::slp_config["net.slp.useScopes"]=UI::QueryWidget(`id(`scope), `Value);
+ SlpServer::slp_config["net.slp.DAAddresses"]=UI::QueryWidget(`id(`ip), `Value);
 };
 
 define boolean validateServerSettings (string key, map event)
