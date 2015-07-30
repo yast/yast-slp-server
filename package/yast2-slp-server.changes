@@ -2,7 +2,7 @@
 Wed Jul 29 13:27:54 UTC 2015 - igonzalezsosa@suse.com
 
 - Fix comments handling on slp.conf (bsc#878892)
-- 3.1.2
+- 3.1.1.1
 
 -------------------------------------------------------------------
 Thu Nov 14 12:16:15 UTC 2013 - vmoravec@suse.com
