@@ -37,8 +37,7 @@
         // we need to exclude ; because of the second matching rule
         "params" : [
                 // Options with one value ('yes' / 'no')
-//                $[ "match" : [ "^[#;][ \t]*([^ \t]+)[ \t]+([^ \t]+)[ \t]+$", "%s %s" ]],
-                $[ "match" : [ "^[#;][ \t]*([^ \t\=]+)[ \t\=]?(.+)[ \t]*$", "; %s %s" ]],
+                $[ "match" : [ "^[#;][ \t]*([^ \t\=]+)[ \t\=]+[ ]*(.+)[ \t]*$", ";%s = %s" ]],
                 // Options with more possible values
                 $[ "match" : [ "^[ \t]*([^ \t\=]+)[ \t\=]+[ ]*(.+)[ \t]*$", "%s = %s" ]],
         ],
