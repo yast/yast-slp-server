@@ -5,8 +5,6 @@ require_relative "test_helper"
 Yast.import "SlpServer"
 
 RSpec.describe "Yast::SlpServer" do
-  FIXTURES_PATH = File.expand_path('../fixtures', __FILE__)
-
   subject(:slp_server) { Yast::SlpServer }
 
   let(:fixtures) { File.join(FIXTURES_PATH, "valid") }
