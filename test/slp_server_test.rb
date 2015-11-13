@@ -39,6 +39,28 @@ RSpec.describe "Yast::SlpServer" do
       end
     end
 
+    context "given a broken configuration (bsc#878892)" do
+      let(:fixtures) { File.join(FIXTURES_PATH, "broken") }
+
+      it "updates SLP config and returns true" do
+        old_settings = slp_server.slp_config.clone
+        expect(slp_server.Read).to eq(true)
+        expect(slp_server.slp_config)
+          .to eq(old_settings.merge(
+            "net.slp.isBroadcastOnly" => "true",
+            "net.slp.DAAddresses" => " ",
+            "net.slp.isDA" => "false"
+          ))
+      end
+
+      # '; net.slp.DAHeartBeat' was intepreted as
+      # a param named ';' with value 'net.slp.DAHeartBeat'
+      it "does not take ';' as a param name" do
+        expect(slp_server.Read).to eq(true)
+        expect(slp_server.slp_config[";"]).to be_nil
+      end
+    end
+
     context "configuration does not exist" do
       let(:fixtures) { FIXTURES_PATH } # /etc/slp.conf does not exist there
 
