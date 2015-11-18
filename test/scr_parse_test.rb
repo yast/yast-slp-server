@@ -10,7 +10,7 @@ RSpec.describe "slp.conf parsing" do
   UNCOMMENTED_REGEXP = Regexp.new '[ \t]*([^ \t\=]+)[ \t\=]+[ ]*(.+)[ \t]*$'
 
   File.readlines(COMMENTED_LINES).each do |line|
-    it "extracts param name and value from '#{line.strip}'" do
+    it "extracts param name and value from '#{line.chomp}'" do
       match = COMMENTED_REGEXP.match(line)
       expect(match).to_not be_nil, "Parsing failed"
       expect(match[1]).to eq("foo")
@@ -19,7 +19,7 @@ RSpec.describe "slp.conf parsing" do
   end
 
   File.readlines(UNCOMMENTED_LINES).each do |line|
-    it "extracts param name and value from '#{line.strip}'" do
+    it "extracts param name and value from '#{line.chomp}'" do
       match = UNCOMMENTED_REGEXP.match(line)
       expect(match).to_not be_nil, "Parsing failed"
       expect(match[1]).to eq("foo")
