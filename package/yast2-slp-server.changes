@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Thu Nov 12 11:41:35 UTC 2015 - igonzalezsosa@suse.com
+
+- Fix handling of broken options due to bsc#878892
+  (bsc#954494)
+- 2.17.8
+
+-------------------------------------------------------------------
 Wed Jul 29 12:26:48 UTC 2015 - igonzalezsosa@suse.com
 
 - Fix comments handling on slp.conf (bsc#878892)
