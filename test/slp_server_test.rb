@@ -4,7 +4,7 @@ require_relative "test_helper"
 
 Yast.import "SlpServer"
 
-RSpec.describe "Yast::SlpServer" do
+describe Yast::SlpServer do
   subject(:slp_server) { Yast::SlpServer }
 
   let(:fixtures) { File.join(FIXTURES_PATH, "valid") }
@@ -29,7 +29,7 @@ RSpec.describe "Yast::SlpServer" do
     end
 
     context "given a valid configuration" do
-      it "updates SLP config and returns true" do
+      it "reads SLP config and returns true" do
         old_settings = slp_server.slp_config.clone
         expect(slp_server.Read).to eq(true)
         expect(slp_server.slp_config)
@@ -40,7 +40,7 @@ RSpec.describe "Yast::SlpServer" do
     context "given a broken configuration (bsc#878892)" do
       let(:fixtures) { File.join(FIXTURES_PATH, "broken") }
 
-      it "updates SLP config and returns true" do
+      it "reads SLP config and returns true" do
         old_settings = slp_server.slp_config.clone
         expect(slp_server.Read).to eq(true)
         expect(slp_server.slp_config)
@@ -53,6 +53,7 @@ RSpec.describe "Yast::SlpServer" do
 
       # '; net.slp.DAHeartBeat' was intepreted as
       # a param named ';' with value 'net.slp.DAHeartBeat'
+      # (bsc#954494)
       it "does not take ';' as a param name" do
         expect(slp_server.Read).to eq(true)
         expect(slp_server.slp_config[";"]).to be_nil
@@ -62,7 +63,7 @@ RSpec.describe "Yast::SlpServer" do
     context "configuration does not exist" do
       let(:fixtures) { FIXTURES_PATH } # /etc/slp.conf does not exist there
 
-      it "leaves SLP config untouched" do
+      it "leaves SLP config untouched and returns true" do
         old_settings = slp_server.slp_config.clone
         expect(slp_server.Read).to eq(true)
         expect(slp_server.slp_config).to eq(old_settings)
