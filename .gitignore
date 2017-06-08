@@ -20,3 +20,7 @@ slp-server.pot
 autom4te.cache
 *.m4
 *.ami
+/.yardoc
+/doc
+/coverage
+/testsuite/raw.tmp*
