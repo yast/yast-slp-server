@@ -13,6 +13,7 @@ X-SuSE-YaST-AutoInst=all
 X-SuSE-YaST-Geometry=
 X-SuSE-YaST-SortKey=
 X-SuSE-YaST-AutoInstResource=slp-server
+X-SuSE-YaST-Keywords=network,installation,repositories,products,serviceLocationProtocol
 
 Icon=yast-slp-server
 Exec=xdg-su -c "/sbin/yast2 slp-server"
