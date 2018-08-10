@@ -10,6 +10,7 @@
 # Representation of the configuration of slp-server.
 # Input and output routines.
 require "yast"
+require "yast2/system_service"
 
 module Yast
   class SlpServerClass < Module
@@ -25,6 +26,7 @@ module Yast
       Yast.import "Package"
       Yast.import "Popup"
       Yast.import "Confirm"
+      Yast.import "Mode"
       Yast.import "Map"
       Yast.import "NetworkService"
 
@@ -71,6 +73,13 @@ module Yast
 
       @REGFILES = {}
       @reg_files = []
+    end
+
+    # Service to configure
+    #
+    # @return [Yast2::SystemService]
+    def service
+      @service ||= Yast2::SystemService.find("slpd")
     end
 
     # Abort function
@@ -235,7 +244,6 @@ module Yast
       return false if !Confirm.MustBeRoot
       return false if !NetworkService.RunningNetworkPopup
       Progress.NextStage
-      return false if false
       Builtins.sleep(sl)
 
       Progress.set(false)
@@ -309,15 +317,15 @@ module Yast
       Progress.set(true)
 
       Progress.NextStage
+
       # Error message
-      Report.Error(_("Cannot write settings.")) if !WriteGlobalConfig()
+      Report.Error(_("Cannot write settings.")) unless save_settings
+
       Builtins.sleep(sl)
 
       # run SuSEconfig
       return false if Abort()
       Progress.NextStage
-      # Error message
-      return false if false
       Builtins.sleep(sl)
 
       return false if Abort()
@@ -328,6 +336,25 @@ module Yast
       return false if Abort()
       @configured = true
       true
+    end
+
+    # Saves service settings
+    #
+    # @return [Boolean] true if settings were correctly saved; false otherwise
+    def save_settings
+      WriteGlobalConfig() && save_status
+    end
+
+    # Saves service status (start mode and starts/stops the service)
+    #
+    # @note For AutoYaST and for command line actions, it does not save the service,
+    #   due to the {#service} is not used in that cases.
+    #
+    # @return [Boolean]
+    def save_status
+      return true if Mode.auto || Mode.commandline
+
+      service.save
     end
 
     # Get all slp-server settings from the first parameter
@@ -400,12 +427,14 @@ module Yast
       { "install" => [], "remove" => [] }
     end
 
+    # @deprecated
     def GetStartService
       @serviceStatus = Service.Enabled("slpd")
       Builtins.y2milestone("Status of slpd service %1", @serviceStatus)
       @serviceStatus
     end
 
+    # @deprecated
     def SetStartService(status)
       Builtins.y2milestone("Set service status %1", status)
       if status == true

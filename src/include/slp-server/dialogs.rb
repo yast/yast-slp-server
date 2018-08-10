@@ -6,6 +6,9 @@
 # Authors:	Zugec Michal <mzugec@suse.cz>
 #
 # $Id$
+
+require "cwm/service_widget"
+
 module Yast
   module SlpServerDialogsInclude
     def initialize_slp_server_dialogs(include_target)
@@ -16,7 +19,6 @@ module Yast
       Yast.import "SlpServer"
       Yast.import "CWMTab"
       Yast.import "CWM"
-      Yast.import "CWMServiceStart"
       Yast.import "CWMFirewallInterfaces"
       Yast.import "TablePopup"
       Yast.import "LogView"
@@ -34,34 +36,7 @@ module Yast
 
 
       @widgets = {
-        # service status widget
-        "auto_start_up"   => CWMServiceStart.CreateAutoStartWidget(
-          {
-            "get_service_auto_start" => fun_ref(
-              SlpServer.method(:GetStartService),
-              "boolean ()"
-            ),
-            "set_service_auto_start" => fun_ref(
-              SlpServer.method(:SetStartService),
-              "void (boolean)"
-            ),
-            # radio button (starting SLP service - option 1)
-            "start_auto_button"      => _(
-              "When &Booting"
-            ),
-            # radio button (starting SLP service - option 2)
-            "start_manual_button"    => _(
-              "&Manually"
-            ),
-            "help"                   => Builtins.sformat(
-              CWMServiceStart.AutoStartHelpTemplate,
-              # part of help text, used to describe radiobuttons (matching starting SLP service but without "&")
-              _("When Booting"),
-              # part of help text, used to describe radiobuttons (matching starting SLP service but without "&")
-              _("Manually")
-            )
-          }
-        ),
+        "auto_start_up" => service_widget.cwm_definition,
         # firewall widget
         "firewall"        => CWMFirewallInterfaces.CreateOpenFirewallWidget(
           # bnc#825505 - fixed not working checkbox due to unknown firewall service
@@ -305,6 +280,13 @@ module Yast
           "widget_names" => ["reg_table"]
         }
       }
+    end
+
+    # Widget to define state and start mode of the service
+    #
+    # @return [::CWM::ServiceWidget]
+    def service_widget
+      @service ||= ::CWM::ServiceWidget.new(SlpServer.service)
     end
 
     def initExpert(key)

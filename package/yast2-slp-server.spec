@@ -15,29 +15,25 @@
 # Please submit bugfixes or comments via http://bugs.opensuse.org/
 #
 
-
 Name:           yast2-slp-server
-Version:        4.0.1
+Summary:	YaST2 SLP Daemon Server Configuration
+Version:        4.1.0
 Release:        0
-
-BuildRoot:      %{_tmppath}/%{name}-%{version}-build
-Source0:        %{name}-%{version}.tar.bz2
 
 Group:	        System/YaST
 License:        GPL-2.0+
-BuildRequires:	update-desktop-files yast2 yast2-testsuite
-BuildRequires:  yast2-devtools >= 3.1.10
 
-# network needs Wizard::OpenCancelOKDialog()
-#  function from yast2-2.18.2
-# Wizard::SetDesktopTitleAndIcon
-Requires:       yast2 >= 2.21.22
-
-BuildArchitectures:	noarch
-
+# CWM::ServiceWidget
+Requires:       yast2 >= 4.1.0
 Requires:       yast2-ruby-bindings >= 1.0.0
 
-Summary:	YaST2 SLP Daemon Server Configuration
+BuildRoot:      %{_tmppath}/%{name}-%{version}-build
+Source0:        %{name}-%{version}.tar.bz2
+BuildArchitectures:	noarch
+BuildRequires:	update-desktop-files yast2 yast2-testsuite
+BuildRequires:  yast2-devtools >= 3.1.10
+# CWM::ServiceWidget
+BuildRequires:  yast2 >= 4.1.0
 
 %description
 This package contains the YaST2 component for the configuration of an
@@ -51,7 +47,6 @@ SLP daemon.
 
 %install
 %yast_install
-
 
 %files
 %defattr(-,root,root)

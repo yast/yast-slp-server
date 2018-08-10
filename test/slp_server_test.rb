@@ -86,4 +86,76 @@ describe Yast::SlpServer do
       end
     end
   end
+
+  describe "#Write" do
+    subject(:slp_server) { Yast::SlpServerClass.new }
+
+    before do
+      allow(Yast::Progress).to receive(:New)
+      allow(Yast::Progress).to receive(:NextStage)
+      allow(Yast::Progress).to receive(:set)
+
+      allow(Yast::Builtins).to receive(:sleep)
+
+      allow(Yast::SuSEFirewall).to receive(:Write)
+
+      allow(Yast2::SystemService).to receive(:find).with("slpd").and_return(service)
+
+      allow(Yast::Mode).to receive(:auto) { auto }
+      allow(Yast::Mode).to receive(:commandline) { commandline }
+
+      slp_server.main
+    end
+
+    let(:service) { instance_double(Yast2::SystemService, save: true) }
+
+    let(:auto) { false }
+    let(:commandline) { false }
+
+    shared_examples "old behavior" do
+      it "does not save the system service" do
+        allow(slp_server).to receive(:WriteGlobalConfig).and_return(true)
+
+        expect(service).to_not receive(:save)
+
+        slp_server.Write
+      end
+
+      it "calls to :WriteGlobalConfig" do
+        expect(slp_server).to receive(:WriteGlobalConfig).and_return(true)
+
+        slp_server.Write
+      end
+    end
+
+    context "when running in command line" do
+      let(:commandline) { true }
+
+      include_examples "old behavior"
+    end
+
+    context "when running in AutoYaST mode" do
+      let(:auto) { true }
+
+      include_examples "old behavior"
+    end
+
+    context "when running in normal mode" do
+      before do
+        allow(slp_server).to receive(:WriteGlobalConfig).and_return(true)
+      end
+
+      it "calls to :WriteGlobalConfig" do
+        expect(slp_server).to receive(:WriteGlobalConfig)
+
+        slp_server.Write
+      end
+
+      it "saves the system service" do
+        expect(service).to receive(:save)
+
+        slp_server.Write
+      end
+    end
+  end
 end
