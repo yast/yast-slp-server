@@ -21,7 +21,7 @@ Version:        4.1.0
 Release:        0
 
 Group:	        System/YaST
-License:        GPL-2.0+
+License:        GPL-2.0-or-later
 
 # CWM::ServiceWidget
 Requires:       yast2 >= 4.1.0
