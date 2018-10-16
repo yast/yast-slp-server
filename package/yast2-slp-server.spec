@@ -58,3 +58,4 @@ SLP daemon.
 %{yast_desktopdir}/slp-server.desktop
 %{yast_scrconfdir}/slp*.scr
 %doc %{yast_docdir}
+%license COPYING
