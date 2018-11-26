@@ -17,7 +17,7 @@
 
 Name:           yast2-slp-server
 Summary:	YaST2 SLP Daemon Server Configuration
-Version:        4.1.0
+Version:        4.1.1
 Release:        0
 
 Group:	        System/YaST
@@ -57,5 +57,6 @@ SLP daemon.
 %{yast_moduledir}/SlpServer.*
 %{yast_desktopdir}/slp-server.desktop
 %{yast_scrconfdir}/slp*.scr
+%{_datadir}/icons/*
 %doc %{yast_docdir}
 %license COPYING
