@@ -57,6 +57,6 @@ SLP daemon.
 %{yast_moduledir}/SlpServer.*
 %{yast_desktopdir}/slp-server.desktop
 %{yast_scrconfdir}/slp*.scr
-%{_datadir}/icons/*
+%{yast_icondir}
 %doc %{yast_docdir}
 %license COPYING
