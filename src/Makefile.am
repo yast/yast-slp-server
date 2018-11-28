@@ -24,7 +24,7 @@ desktop_DATA = \
 
 scalabledir = @icondir@/hicolor/scalable/apps
 scalable_DATA = \
-  icons/hicolor/scalable/apps/yast-apparmor.svg
+  icons/hicolor/scalable/apps/yast-slp-server.svg
 
 EXTRA_DIST = $(module_DATA) $(client_DATA) $(ynclude_DATA) $(scrconf_DATA) $(desktop_DATA) $(scalable_DATA)
 
