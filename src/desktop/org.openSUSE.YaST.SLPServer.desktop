@@ -18,6 +18,7 @@ X-SuSE-YaST-Keywords=network,installation,repositories,products,serviceLocationP
 Icon=yast-slp-server
 Exec=xdg-su -c "/sbin/yast2 slp-server"
 
-Name=SLP Server
-GenericName=Configure a SLP server
+Name=YaST SLP Server
+GenericName=SLP Server
+Comment=Configure an SLP Server
 StartupNotify=true
