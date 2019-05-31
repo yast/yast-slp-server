@@ -65,7 +65,7 @@ module Yast
       }
 
       Wizard.OpenCancelOKDialog
-      Wizard.SetDesktopTitleAndIcon("slp-server")
+      Wizard.SetDesktopTitleAndIcon("org.openSUSE.YaST.SLPServer")
 
       ret = Sequencer.Run(aliases, sequence)
 
@@ -83,7 +83,7 @@ module Yast
       contents = Label(_("Initializing..."))
 
       Wizard.CreateDialog
-      Wizard.SetDesktopTitleAndIcon("slp-server")
+      Wizard.SetDesktopTitleAndIcon("org.openSUSE.YaST.SLPServer")
       Wizard.SetContentsButtons(
         caption,
         contents,
