@@ -26,7 +26,7 @@ Url:            https://github.com/yast/yast-slp-server
 Source0:        %{name}-%{version}.tar.bz2
 
 BuildRequires:  update-desktop-files yast2 yast2-testsuite
-BuildRequires:  yast2-devtools >= 3.1.10
+BuildRequires:  yast2-devtools >= 4.2.2
 # CWM::ServiceWidget
 BuildRequires:  yast2 >= 4.1.0
 
