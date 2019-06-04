@@ -12,51 +12,51 @@
 # license that conforms to the Open Source Definition (Version 1.9)
 # published by the Open Source Initiative.
 
-# Please submit bugfixes or comments via http://bugs.opensuse.org/
+# Please submit bugfixes or comments via https://bugs.opensuse.org/
 #
 
 Name:           yast2-slp-server
-Summary:	YaST2 SLP Daemon Server Configuration
-Version:        4.1.1
+Summary:        YaST2 SLP Daemon Server Configuration
+Version:        4.2.0
 Release:        0
-
-Group:	        System/YaST
+Group:          System/YaST
 License:        GPL-2.0-or-later
+Url:            https://github.com/yast/yast-slp-server
+
+Source0:        %{name}-%{version}.tar.bz2
+
+BuildRequires:  update-desktop-files yast2 yast2-testsuite
+BuildRequires:  yast2-devtools >= 4.2.2
+# CWM::ServiceWidget
+BuildRequires:  yast2 >= 4.1.0
 
 # CWM::ServiceWidget
 Requires:       yast2 >= 4.1.0
 Requires:       yast2-ruby-bindings >= 1.0.0
 
-BuildRoot:      %{_tmppath}/%{name}-%{version}-build
-Source0:        %{name}-%{version}.tar.bz2
-BuildArchitectures:	noarch
-BuildRequires:	update-desktop-files yast2 yast2-testsuite
-BuildRequires:  yast2-devtools >= 3.1.10
-# CWM::ServiceWidget
-BuildRequires:  yast2 >= 4.1.0
+BuildArch:      noarch
 
 %description
 This package contains the YaST2 component for the configuration of an
 SLP daemon.
 
 %prep
-%setup -n %{name}-%{version}
+%setup -q
 
 %build
 %yast_build
 
 %install
 %yast_install
+%yast_metainfo
 
 %files
-%defattr(-,root,root)
-%dir %{yast_yncludedir}/slp-server
-%{yast_yncludedir}/slp-server/*
-%{yast_clientdir}/slp-server.rb
-%{yast_clientdir}/slp-server_*.rb
-%{yast_moduledir}/SlpServer.*
-%{yast_desktopdir}/slp-server.desktop
-%{yast_scrconfdir}/slp*.scr
+%{yast_yncludedir}
+%{yast_clientdir}
+%{yast_moduledir}
+%{yast_desktopdir}
+%{yast_metainfodir}
+%{yast_scrconfdir}
 %{yast_icondir}
 %doc %{yast_docdir}
 %license COPYING

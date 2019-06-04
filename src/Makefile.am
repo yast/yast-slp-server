@@ -20,7 +20,7 @@ scrconf_DATA = \
   scrconf/slp_reg.scr
 
 desktop_DATA = \
-  desktop/slp-server.desktop
+  desktop/org.opensuse.yast.SLPServer.desktop
 
 scalabledir = @icondir@/hicolor/scalable/apps
 scalable_DATA = \
