@@ -42,21 +42,28 @@ SLP daemon.
 %prep
 %setup -n %{name}-%{version}
 
-%build
-%yast_build
+%check
+rake test:unit
 
 %install
-%yast_install
+rake install DESTDIR="%{buildroot}"
 
 %files
 %defattr(-,root,root)
 %dir %{yast_yncludedir}/slp-server
+%{yast_dir}/clients/*.rb
+%{yast_dir}/lib
 %{yast_yncludedir}/slp-server/*
-%{yast_clientdir}/slp-server.rb
-%{yast_clientdir}/slp-server_*.rb
 %{yast_moduledir}/SlpServer.*
 %{yast_desktopdir}/slp-server.desktop
+
+# agents-scr
 %{yast_scrconfdir}/slp*.scr
+
+# icons
 %{yast_icondir}
+
 %doc %{yast_docdir}
 %license COPYING
+
+%build
