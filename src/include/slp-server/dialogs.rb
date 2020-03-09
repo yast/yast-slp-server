@@ -33,253 +33,6 @@ module Yast
       @copy_config = {}
       @reg_files_pkg = {}
       @currentRegFile = ""
-
-
-      @widgets = {
-        "auto_start_up" => service_widget.cwm_definition,
-        # firewall widget
-        "firewall"        => CWMFirewallInterfaces.CreateOpenFirewallWidget(
-          # bnc#825505 - fixed not working checkbox due to unknown firewall service
-          { "services" => ["service:openslp"], "display_details" => true }
-        ),
-        # button for view log files
-        "view_log"        => {
-          "widget"        => :custom,
-          "custom_widget" => VBox(PushButton(Id(:show_log), _("Show Log"))),
-          "handle"        => fun_ref(
-            method(:handleShowLog),
-            "symbol (string, map)"
-          ),
-          "label"         => _("Show Log"),
-          "help"          => Ops.get_string(@HELPS, "show_log", "")
-        },
-        # button for expert settings (all config options)
-        "expert"          => {
-          "widget"        => :custom,
-          "custom_widget" => VBox(PushButton(Id(:expert), _("Expert Settings"))),
-          "handle"        => fun_ref(
-            method(:handleExpert),
-            "symbol (string, map)"
-          ),
-          "label"         => _("Expert Settings"),
-          "help"          => Ops.get_string(@HELPS, "expert", "")
-        },
-        # response + scopes widget
-        "server_settings" => {
-          "widget"            => :custom,
-          "custom_widget"     => VBox(
-            RadioButtonGroup(
-              Id(:resp),
-              VBox(
-                Label(_("Response To")),
-                Left(RadioButton(Id(:bc), Opt(:notify), _("Broadcast"))),
-                Left(RadioButton(Id(:mc), Opt(:notify), _("Multicast"))),
-                Left(RadioButton(Id(:da), Opt(:notify), _("DA Server"))),
-                Left(
-                  RadioButton(
-                    Id(:da_server),
-                    Opt(:notify),
-                    _("Becomes DA Server")
-                  )
-                )
-              )
-            ),
-            TextEntry(Id(:ip), _("&IP Addresses of DA Servers")),
-            TextEntry(Id(:scope), _("&Scopes"))
-          ),
-          "init"              => fun_ref(
-            method(:initServerSettings),
-            "void (string)"
-          ),
-          "handle"            => fun_ref(
-            method(:handleServerSettings),
-            "symbol (string, map)"
-          ),
-          "store"             => fun_ref(
-            method(:storeServerSettings),
-            "void (string, map)"
-          ),
-          "validate_type"     => :function,
-          "validate_function" => fun_ref(
-            method(:validateServerSettings),
-            "boolean (string, map)"
-          ),
-          "label"             => _("SLP Server Settings"),
-          "help"              => Ops.get_string(@HELPS, "server_settings", "")
-        },
-        # expert settings ;)
-        "server_table"    => TablePopup.CreateTableDescr(
-          {
-            "add_delete_buttons" => true,
-            "up_down_buttons"    => false,
-            "unique_keys"        => true
-          },
-          {
-            "init"          => fun_ref(method(:initExpert), "void (string)"),
-            "store"         => fun_ref(
-              method(:storeExpert),
-              "void (string, map)"
-            ),
-            "options"       => getServerOptions,
-            "ids"           => fun_ref(method(:valuesServTable), "list (map)"),
-            "id2key"        => fun_ref(method(:Id2Key), "string (map, any)"),
-            "fallback"      => {
-              "init"    => fun_ref(method(:rowInit), "void (any, string)"),
-              "store"   => fun_ref(method(:rowStore), "void (any, string)"),
-              "summary" => fun_ref(method(:rowSummary), "string (any, string)")
-            },
-            "option_delete" => fun_ref(
-              method(:rowDelete),
-              "boolean (any, string)"
-            ),
-            "add_items"     => Builtins.maplist(
-              Convert.convert(
-                getServerOptions,
-                :from => "map",
-                :to   => "map <string, any>"
-              )
-            ) { |k1, v1| k1 },
-            "help"          => Ops.get_string(@HELPS, "server_table", "")
-          }
-        ),
-        # table with all files from /etc/slp.reg.d/
-        "regedit_table"   => TablePopup.CreateTableDescr(
-          {
-            "add_delete_buttons" => true,
-            "up_down_buttons"    => false,
-            "unique_keys"        => false
-          },
-          {
-            "init"          => fun_ref(
-              method(:initRegEditExpert),
-              "void (string)"
-            ),
-            "store"         => fun_ref(
-              method(:storeRegEdit),
-              "void (string, map)"
-            ),
-            "options"       => getRegEditOptions,
-            "ids"           => fun_ref(method(:valuesRegFile), "list (map)"),
-            "id2key"        => fun_ref(
-              method(:Id2RegEditKey),
-              "string (map, any)"
-            ),
-            "fallback"      => {
-              "init"    => fun_ref(
-                method(:rowRegEditInit),
-                "void (any, string)"
-              ),
-              "store"   => fun_ref(
-                method(:rowRegEditStore),
-                "void (any, string)"
-              ),
-              "summary" => fun_ref(
-                method(:rowRegEditSummary),
-                "string (any, string)"
-              )
-            },
-            "option_delete" => fun_ref(
-              method(:rowRegEditDelete),
-              "boolean (any, string)"
-            ),
-            "add_items"     => Builtins.maplist(
-              Convert.convert(
-                getRegEditOptions,
-                :from => "map",
-                :to   => "map <string, any>"
-              )
-            ) { |k1, v1| k1 }
-          }
-        ),
-        # parameters from given reg.d file
-        "reg_table"       => TablePopup.CreateTableDescr(
-          {
-            "add_delete_buttons" => true,
-            "up_down_buttons"    => false,
-            "unique_keys"        => false
-          },
-          {
-            "init"          => fun_ref(method(:initReg), "void (string)"),
-            "id2key"        => fun_ref(method(:Id2RegKey), "string (map, any)"),
-            "ids"           => fun_ref(method(:valuesRegTable), "list (map)"),
-            "option_delete" => fun_ref(
-              method(:deleteReg),
-              "boolean (any, string)"
-            ),
-            "fallback"      => {
-              "summary" => fun_ref(
-                method(:rowRegSummary),
-                "string (any, string)"
-              )
-            },
-            "help"          => Ops.get_string(@HELPS, "reg_files", ""),
-            "handle"        => fun_ref(
-              method(:handleRegTable),
-              "symbol (string, map)"
-            )
-          }
-        )
-      }
-      # description map for tabs in overview dialog
-      @tabs_descr = {
-        "general"        => {
-          "header"       => _("Global SLP Configuration"),
-          "contents"     => VBox(
-            VStretch(),
-            HBox(
-              HStretch(),
-              HSpacing(1),
-              VBox(
-                "auto_start_up",
-                VSpacing(2),
-                "firewall",
-                VSpacing(2),
-                "view_log",
-                VSpacing(2)
-              ),
-              HSpacing(1),
-              HStretch()
-            ),
-            VStretch()
-          ),
-          "widget_names" => ["auto_start_up", "firewall", "view_log"]
-        },
-        "server"         => {
-          "header"       => _("SLP Server Configuration"),
-          "contents"     => VBox(
-            VStretch(),
-            HBox(
-              HStretch(),
-              HSpacing(1),
-              VBox("server_settings", VSpacing(2), "expert", VSpacing(2)),
-              HSpacing(1),
-              HStretch()
-            ),
-            VStretch()
-          ),
-          "widget_names" => ["server_settings", "expert"]
-        },
-        "server_details" => {
-          "header"       => _("Server Details"),
-          "contents"     => VBox(
-            VStretch(),
-            HBox(
-              HStretch(),
-              HSpacing(1),
-              VBox("server_table", VSpacing(2)),
-              HStretch(),
-              HSpacing(1)
-            ),
-            VStretch()
-          ),
-          "widget_names" => ["server_table"]
-        },
-        "static"         => {
-          "header"       => _("Static Configuration Files"),
-          "contents"     => VBox("reg_table"),
-          "widget_names" => ["reg_table"]
-        }
-      }
     end
 
     # Widget to define state and start mode of the service
@@ -868,13 +621,14 @@ module Yast
         "tab" => CWMTab.CreateWidget(
           {
             "tab_order"    => ["general", "server", "static"],
-            "tabs"         => @tabs_descr,
-            "widget_descr" => @widgets,
+            "tabs"         => tabs_descr,
+            "widget_descr" => widgets,
             "initial_tab"  => @current_tab,
             "tab_help"     => _("<h1>SLP Server</h1>")
           }
         )
       }
+
       contents = VBox("tab")
 
       w = CWM.CreateWidgets(
@@ -910,7 +664,7 @@ module Yast
       @copy_config = deep_copy(SlpServer.slp_config)
       caption = _("SLP Server Configuration--Expert Dialog")
 
-      w = CWM.CreateWidgets(["server_table"], @widgets)
+      w = CWM.CreateWidgets(["server_table"], widgets)
       contents = HBox(
         HSpacing(1),
         VBox(VSpacing(1), Ops.get_term(w, [0, "widget"]) { VSpacing(1) }),
@@ -938,7 +692,7 @@ module Yast
       @current_tab = "static"
       caption = _("SLP Server Configuration--Edit .reg File")
 
-      w = CWM.CreateWidgets(["regedit_table"], @widgets)
+      w = CWM.CreateWidgets(["regedit_table"], widgets)
       contents = HBox(
         HSpacing(1),
         VBox(VSpacing(1), Ops.get_term(w, [0, "widget"]) { VSpacing(1) }),
@@ -959,6 +713,259 @@ module Yast
         { :abort => fun_ref(method(:ReallyAbort), "boolean ()") }
       )
       deep_copy(ret)
+    end
+
+  private
+
+    def widgets
+      @widgets ||= {
+        "auto_start_up" => service_widget.cwm_definition,
+        # firewall widget
+        "firewall"        => CWMFirewallInterfaces.CreateOpenFirewallWidget(
+          # bnc#825505 - fixed not working checkbox due to unknown firewall service
+          { "services" => ["service:openslp"], "display_details" => true }
+        ),
+        # button for view log files
+        "view_log"        => {
+          "widget"        => :custom,
+          "custom_widget" => VBox(PushButton(Id(:show_log), _("Show Log"))),
+          "handle"        => fun_ref(
+            method(:handleShowLog),
+            "symbol (string, map)"
+          ),
+          "label"         => _("Show Log"),
+          "help"          => Ops.get_string(@HELPS, "show_log", "")
+        },
+        # button for expert settings (all config options)
+        "expert"          => {
+          "widget"        => :custom,
+          "custom_widget" => VBox(PushButton(Id(:expert), _("Expert Settings"))),
+          "handle"        => fun_ref(
+            method(:handleExpert),
+            "symbol (string, map)"
+          ),
+          "label"         => _("Expert Settings"),
+          "help"          => Ops.get_string(@HELPS, "expert", "")
+        },
+        # response + scopes widget
+        "server_settings" => {
+          "widget"            => :custom,
+          "custom_widget"     => VBox(
+            RadioButtonGroup(
+              Id(:resp),
+              VBox(
+                Label(_("Response To")),
+                Left(RadioButton(Id(:bc), Opt(:notify), _("Broadcast"))),
+                Left(RadioButton(Id(:mc), Opt(:notify), _("Multicast"))),
+                Left(RadioButton(Id(:da), Opt(:notify), _("DA Server"))),
+                Left(
+                  RadioButton(
+                    Id(:da_server),
+                    Opt(:notify),
+                    _("Becomes DA Server")
+                  )
+                )
+              )
+            ),
+            TextEntry(Id(:ip), _("&IP Addresses of DA Servers")),
+            TextEntry(Id(:scope), _("&Scopes"))
+          ),
+          "init"              => fun_ref(
+            method(:initServerSettings),
+            "void (string)"
+          ),
+          "handle"            => fun_ref(
+            method(:handleServerSettings),
+            "symbol (string, map)"
+          ),
+          "store"             => fun_ref(
+            method(:storeServerSettings),
+            "void (string, map)"
+          ),
+          "validate_type"     => :function,
+          "validate_function" => fun_ref(
+            method(:validateServerSettings),
+            "boolean (string, map)"
+          ),
+          "label"             => _("SLP Server Settings"),
+          "help"              => Ops.get_string(@HELPS, "server_settings", "")
+        },
+        # expert settings ;)
+        "server_table"    => TablePopup.CreateTableDescr(
+          {
+            "add_delete_buttons" => true,
+            "up_down_buttons"    => false,
+            "unique_keys"        => true
+          },
+          {
+            "init"          => fun_ref(method(:initExpert), "void (string)"),
+            "store"         => fun_ref(
+              method(:storeExpert),
+              "void (string, map)"
+            ),
+            "options"       => getServerOptions,
+            "ids"           => fun_ref(method(:valuesServTable), "list (map)"),
+            "id2key"        => fun_ref(method(:Id2Key), "string (map, any)"),
+            "fallback"      => {
+              "init"    => fun_ref(method(:rowInit), "void (any, string)"),
+              "store"   => fun_ref(method(:rowStore), "void (any, string)"),
+              "summary" => fun_ref(method(:rowSummary), "string (any, string)")
+            },
+            "option_delete" => fun_ref(
+              method(:rowDelete),
+              "boolean (any, string)"
+            ),
+            "add_items"     => Builtins.maplist(
+              Convert.convert(
+                getServerOptions,
+                :from => "map",
+                :to   => "map <string, any>"
+              )
+            ) { |k1, v1| k1 },
+            "help"          => Ops.get_string(@HELPS, "server_table", "")
+          }
+        ),
+        # table with all files from /etc/slp.reg.d/
+        "regedit_table"   => TablePopup.CreateTableDescr(
+          {
+            "add_delete_buttons" => true,
+            "up_down_buttons"    => false,
+            "unique_keys"        => false
+          },
+          {
+            "init"          => fun_ref(
+              method(:initRegEditExpert),
+              "void (string)"
+            ),
+            "store"         => fun_ref(
+              method(:storeRegEdit),
+              "void (string, map)"
+            ),
+            "options"       => getRegEditOptions,
+            "ids"           => fun_ref(method(:valuesRegFile), "list (map)"),
+            "id2key"        => fun_ref(
+              method(:Id2RegEditKey),
+              "string (map, any)"
+            ),
+            "fallback"      => {
+              "init"    => fun_ref(
+                method(:rowRegEditInit),
+                "void (any, string)"
+              ),
+              "store"   => fun_ref(
+                method(:rowRegEditStore),
+                "void (any, string)"
+              ),
+              "summary" => fun_ref(
+                method(:rowRegEditSummary),
+                "string (any, string)"
+              )
+            },
+            "option_delete" => fun_ref(
+              method(:rowRegEditDelete),
+              "boolean (any, string)"
+            ),
+            "add_items"     => Builtins.maplist(
+              Convert.convert(
+                getRegEditOptions,
+                :from => "map",
+                :to   => "map <string, any>"
+              )
+            ) { |k1, v1| k1 }
+          }
+        ),
+        # parameters from given reg.d file
+        "reg_table"       => TablePopup.CreateTableDescr(
+          {
+            "add_delete_buttons" => true,
+            "up_down_buttons"    => false,
+            "unique_keys"        => false
+          },
+          {
+            "init"          => fun_ref(method(:initReg), "void (string)"),
+            "id2key"        => fun_ref(method(:Id2RegKey), "string (map, any)"),
+            "ids"           => fun_ref(method(:valuesRegTable), "list (map)"),
+            "option_delete" => fun_ref(
+              method(:deleteReg),
+              "boolean (any, string)"
+            ),
+            "fallback"      => {
+              "summary" => fun_ref(
+                method(:rowRegSummary),
+                "string (any, string)"
+              )
+            },
+            "help"          => Ops.get_string(@HELPS, "reg_files", ""),
+            "handle"        => fun_ref(
+              method(:handleRegTable),
+              "symbol (string, map)"
+            )
+          }
+        )
+      }
+    end
+
+    # Description map for tabs in overview dialog
+    def tabs_descr
+      @tabs_descr ||= {
+        "general"        => {
+          "header"       => _("Global SLP Configuration"),
+          "contents"     => VBox(
+            VStretch(),
+            HBox(
+              HStretch(),
+              HSpacing(1),
+              VBox(
+                "auto_start_up",
+                VSpacing(2),
+                "firewall",
+                VSpacing(2),
+                "view_log",
+                VSpacing(2)
+              ),
+              HSpacing(1),
+              HStretch()
+            ),
+            VStretch()
+          ),
+          "widget_names" => ["auto_start_up", "firewall", "view_log"]
+        },
+        "server"         => {
+          "header"       => _("SLP Server Configuration"),
+          "contents"     => VBox(
+            VStretch(),
+            HBox(
+              HStretch(),
+              HSpacing(1),
+              VBox("server_settings", VSpacing(2), "expert", VSpacing(2)),
+              HSpacing(1),
+              HStretch()
+            ),
+            VStretch()
+          ),
+          "widget_names" => ["server_settings", "expert"]
+        },
+        "server_details" => {
+          "header"       => _("Server Details"),
+          "contents"     => VBox(
+            VStretch(),
+            HBox(
+              HStretch(),
+              HSpacing(1),
+              VBox("server_table", VSpacing(2)),
+              HStretch(),
+              HSpacing(1)
+            ),
+            VStretch()
+          ),
+          "widget_names" => ["server_table"]
+        },
+        "static"         => {
+          "header"       => _("Static Configuration Files"),
+          "contents"     => VBox("reg_table"),
+          "widget_names" => ["reg_table"]
+        }
+      }
     end
   end
 end
