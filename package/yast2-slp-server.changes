@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Mon Mar  9 10:52:33 UTC 2020 - Knut Anderssen <kanderssen@suse.com>
+
+- Do not break when running the module without 'openslp-server'
+  package installed (bsc#1165638)
+- 4.1.2
+
+-------------------------------------------------------------------
 Mon Nov 26 20:49:33 UTC 2018 - Noah Davis <noahadvs@gmail.com>
 
 - Provide icon with module (boo#1109310)
