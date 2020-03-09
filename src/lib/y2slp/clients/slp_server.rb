@@ -59,6 +59,8 @@ module Y2Slp
         # Finish
         log.info "SlpServer module finished with ret=#{ret.inspect})"
         log.info "----------------------------------------"
+
+        ret
       end
 
       def cmdline_description

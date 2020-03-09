@@ -14,16 +14,17 @@ describe Y2Slp::Clients::SlpServer do
       let(:args) { [Yast::Path.new(".propose")] }
 
       it "runs the autosequence configuration" do
-        expect(subject).to receive(:SlpServerAutoSequence)
-        subject.main
+        expect(subject).to receive(:SlpServerAutoSequence).and_return(:auto)
+
+        expect(subject.main).to eq(:auto)
       end
     end
 
     context "when the client is called without arguments" do
       it "runs the CommandLine module" do
-        expect(Yast::CommandLine).to receive(:Run)
+        expect(Yast::CommandLine).to receive(:Run).and_return(:next)
 
-        subject.main
+        expect(subject.main).to eq(:next)
       end
     end
   end
