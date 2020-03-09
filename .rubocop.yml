@@ -1,0 +1,22 @@
+# use the shared Yast defaults
+inherit_from:
+  /usr/share/YaST2/data/devtools/data/rubocop_yast_style.yml
+
+
+AllCops:
+  Exclude:
+    - 'package/*.spec'
+    - 'src/modules/*.rb'
+    - 'src/include/slp-server/*.rb'
+    - 'src/clients/*.rb'
+    - 'test/*.rb'
+
+Metrics/BlockLength:
+  Max: 50
+  Exclude:
+    - 'test/**/*.rb'
+
+# this needs more testing if we can have frozen string literals
+Style/FrozenStringLiteralComment:
+  Enabled: false
+

@@ -1,7 +1,7 @@
 #
 # spec file for package yast2-slp-server
 #
-# Copyright (c) 2013 SUSE LINUX Products GmbH, Nuernberg, Germany.
+# Copyright (c) 2020 SUSE LLC
 #
 # All modifications and additions to the file contributed by third parties
 # remain the property of their copyright owners, unless otherwise agreed
@@ -17,7 +17,7 @@
 
 Name:           yast2-slp-server
 Summary:        YaST2 SLP Daemon Server Configuration
-Version:        4.2.0
+Version:        4.2.1
 Release:        0
 Group:          System/YaST
 License:        GPL-2.0-or-later
@@ -25,11 +25,14 @@ Url:            https://github.com/yast/yast-slp-server
 
 Source0:        %{name}-%{version}.tar.bz2
 
-BuildRequires:  update-desktop-files yast2 yast2-testsuite
+BuildRequires:  update-desktop-files
 BuildRequires:  yast2-devtools >= 4.2.2
 # CWM::ServiceWidget
 BuildRequires:  yast2 >= 4.1.0
-
+# for install task
+BuildRequires:  rubygem(%rb_default_ruby_abi:yast-rake)
+# testsuite
+BuildRequires:  rubygem(%rb_default_ruby_abi:rspec)
 # CWM::ServiceWidget
 Requires:       yast2 >= 4.1.0
 Requires:       yast2-ruby-bindings >= 1.0.0
@@ -43,8 +46,8 @@ SLP daemon.
 %prep
 %setup -q
 
-%build
-%yast_build
+%check
+rake test:unit
 
 %install
 %yast_install
@@ -52,11 +55,17 @@ SLP daemon.
 
 %files
 %{yast_yncludedir}
+%{yast_libdir}
 %{yast_clientdir}
 %{yast_moduledir}
 %{yast_desktopdir}
 %{yast_metainfodir}
 %{yast_scrconfdir}
 %{yast_icondir}
+
 %doc %{yast_docdir}
 %license COPYING
+
+%build
+
+%changelog
