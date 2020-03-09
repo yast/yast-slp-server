@@ -30,8 +30,13 @@ Requires:       yast2-ruby-bindings >= 1.0.0
 BuildRoot:      %{_tmppath}/%{name}-%{version}-build
 Source0:        %{name}-%{version}.tar.bz2
 BuildArchitectures:	noarch
-BuildRequires:	update-desktop-files yast2 yast2-testsuite
+BuildRequires:	update-desktop-files yast2
 BuildRequires:  yast2-devtools >= 3.1.10
+# for install task
+BuildRequires:  rubygem(%rb_default_ruby_abi:yast-rake)
+# testsuite
+BuildRequires:  rubygem(%rb_default_ruby_abi:rspec)
+
 # CWM::ServiceWidget
 BuildRequires:  yast2 >= 4.1.0
 
