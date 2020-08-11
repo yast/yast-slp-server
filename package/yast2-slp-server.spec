@@ -17,7 +17,7 @@
 
 Name:           yast2-slp-server
 Summary:        YaST2 SLP Daemon Server Configuration
-Version:        4.2.1
+Version:        4.3.0
 Release:        0
 Group:          System/YaST
 License:        GPL-2.0-or-later
@@ -36,6 +36,8 @@ BuildRequires:  rubygem(%rb_default_ruby_abi:rspec)
 # CWM::ServiceWidget
 Requires:       yast2 >= 4.1.0
 Requires:       yast2-ruby-bindings >= 1.0.0
+
+Supplements:    autoyast(slp-server)
 
 BuildArch:      noarch
 
